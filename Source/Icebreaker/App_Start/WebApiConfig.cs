@@ -1,6 +1,7 @@
 ﻿// <copyright file="WebApiConfig.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
+
 namespace Icebreaker
 {
     using System.Reflection;

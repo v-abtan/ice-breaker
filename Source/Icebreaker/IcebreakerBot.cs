@@ -3,6 +3,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
+
 namespace Icebreaker
 {
     using System;
