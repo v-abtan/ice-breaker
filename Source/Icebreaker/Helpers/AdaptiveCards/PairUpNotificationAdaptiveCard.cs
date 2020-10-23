@@ -3,9 +3,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
-
-using Microsoft.Bot.Schema.Teams;
-
 namespace Icebreaker.Helpers.AdaptiveCards
 {
     using System;
@@ -13,7 +10,7 @@ namespace Icebreaker.Helpers.AdaptiveCards
     using System.IO;
     using System.Web.Hosting;
     using Icebreaker.Properties;
-    //using Microsoft.Bot.Connector.Teams.Models;
+    using Microsoft.Bot.Schema.Teams;
 
     /// <summary>
     /// Builder class for the pairup notification card

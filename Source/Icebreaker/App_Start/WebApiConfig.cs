@@ -1,20 +1,16 @@
 ﻿// <copyright file="WebApiConfig.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-
-using System.Reflection;
-using System.Web.Http.Dependencies;
-using Autofac;
-using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.BotFramework;
-using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
-using Microsoft.Bot.Connector.Authentication;
-
 namespace Icebreaker
 {
+    using System.Reflection;
     using System.Web.Http;
+    using System.Web.Http.Dependencies;
+    using Autofac;
     using Autofac.Integration.WebApi;
-    //using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.BotFramework;
+    using Microsoft.Bot.Connector.Authentication;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
 

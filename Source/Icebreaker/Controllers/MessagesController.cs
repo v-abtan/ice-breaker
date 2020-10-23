@@ -3,27 +3,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
-
-using System.Text;
-
 namespace Icebreaker
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
     using System.Web.Http;
-    using Microsoft.ApplicationInsights;
-    using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
-    using Microsoft.Bot.Connector;
-    //using Microsoft.Bot.Connector.Teams.Models;
-    using Microsoft.Bot.Schema;
-    using Microsoft.Bot.Schema.Teams;
-    using Properties;
 
     /// <summary>
     /// Controller for the bot messaging endpoint

@@ -3,16 +3,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
-
-using Microsoft.Bot.Connector.Authentication;
-
 namespace Icebreaker.Controllers
 {
     using System.Threading.Tasks;
     using System.Web.Hosting;
     using System.Web.Http;
     using Microsoft.Azure;
-    using Microsoft.Bot.Connector;
+    using Microsoft.Bot.Connector.Authentication;
 
     /// <summary>
     /// API controller to process matches.

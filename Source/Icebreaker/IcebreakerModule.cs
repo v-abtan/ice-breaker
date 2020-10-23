@@ -1,11 +1,6 @@
 ﻿// <copyright file="IcebreakerModule.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-
-using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
-using Microsoft.Bot.Connector.Authentication;
-
 namespace Icebreaker
 {
     using Autofac;
@@ -13,6 +8,9 @@ namespace Icebreaker
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.Azure;
+    using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
+    using Microsoft.Bot.Connector.Authentication;
 
     /// <summary>
     /// Autofac Module
