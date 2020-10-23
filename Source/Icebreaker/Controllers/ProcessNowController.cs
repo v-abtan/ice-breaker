@@ -4,6 +4,8 @@
 // </copyright>
 //----------------------------------------------------------------------------------------------
 
+using Microsoft.Bot.Connector.Authentication;
+
 namespace Icebreaker.Controllers
 {
     using System.Threading.Tasks;

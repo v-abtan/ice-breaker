@@ -2,6 +2,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
+using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
+using Microsoft.Bot.Connector.Authentication;
+
 namespace Icebreaker
 {
     using Autofac;
@@ -24,6 +28,15 @@ namespace Icebreaker
             {
                 return new TelemetryClient(new TelemetryConfiguration(CloudConfigurationManager.GetSetting("APPINSIGHTS_INSTRUMENTATIONKEY")));
             }).SingleInstance();
+
+            builder.Register(c => new MicrosoftAppCredentials(CloudConfigurationManager.GetSetting("MicrosoftAppId"), CloudConfigurationManager.GetSetting("MicrosoftAppPassword")))
+                .SingleInstance();
+
+            builder.RegisterType<BotFrameworkHttpAdapter>().As<IBotFrameworkHttpAdapter>()
+                .SingleInstance();
+
+            builder.RegisterType<IcebreakerBot>().As<IBot>()
+                .SingleInstance();
 
             builder.RegisterType<IcebreakerBot>()
                 .SingleInstance();
