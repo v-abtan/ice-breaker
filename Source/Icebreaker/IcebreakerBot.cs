@@ -635,39 +635,43 @@ namespace Icebreaker
                 };
 
                 // conversation parameters
-                var parameters = new ConversationParameters
+                var teamsChannelId = turnContext.Activity.TeamsGetChannelId();
+                var conversationParameters = new ConversationParameters
                 {
                     Bot = new ChannelAccount { Id = this.botId },
                     Members = new[] { user },
                     ChannelData = new TeamsChannelData
                     {
                         Tenant = new TenantInfo(tenantId),
-                    },
-                    Activity = welcomeActivity
+                    }
                 };
 
                 if (!this.isTesting)
                 {
+                    var botAdapter = (BotFrameworkAdapter)turnContext.Adapter;
+
                     // shoot the activity over
-                    var taskCompletionSource = new TaskCompletionSource<ConversationResourceResponse>();
-                    await ((BotFrameworkAdapter) turnContext.Adapter).CreateConversationAsync(
-                        null,
+                    await botAdapter.CreateConversationAsync(
+                        teamsChannelId,
                         turnContext.Activity.ServiceUrl,
                         this.appCredentials,
-                        parameters,
-                        (newTurnContext, newCancellationToken) =>
+                        conversationParameters,
+                        async (newTurnContext, newCancellationToken) =>
                         {
-                            var activity = newTurnContext.Activity;
-                            taskCompletionSource.SetResult(new ConversationResourceResponse
-                            {
-                                Id = activity.Conversation.Id,
-                                ActivityId = activity.Id,
-                                ServiceUrl = activity.ServiceUrl,
-                            });
-                            return Task.CompletedTask;
+                            // Get the conversationReference
+                            var conversationReference = newTurnContext.Activity.GetConversationReference();
+
+                            // Send the proactive welcome message
+                            await botAdapter.ContinueConversationAsync(
+                                this.appCredentials.MicrosoftAppId,
+                                conversationReference,
+                                async (conversationTurnContext, conversationCancellationToken) =>
+                                {
+                                    await conversationTurnContext.SendActivityAsync(welcomeActivity, conversationCancellationToken);
+                                },
+                                cancellationToken);
                         },
                         cancellationToken).ConfigureAwait(false);
-                    await taskCompletionSource.Task.ConfigureAwait(false);
                 }
 
                 return true;
