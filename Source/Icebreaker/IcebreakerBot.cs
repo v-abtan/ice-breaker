@@ -251,7 +251,7 @@ namespace Icebreaker
             {
                 var connectorClient = this.GetConnectorClient(turnContext.Activity.ServiceUrl);
                 var activity = turnContext.Activity;
-                var senderAadId = activity.From.Properties["aadObjectId"].ToString();
+                var senderAadId = activity.From.AadObjectId;
                 var tenantId = activity.GetChannelData<TeamsChannelData>().Tenant.Id;
 
                 if (string.Equals(activity.Text, "optout", StringComparison.InvariantCultureIgnoreCase))
@@ -345,7 +345,7 @@ namespace Icebreaker
         /// <param name="activity">The activity</param>
         private void LogActivityTelemetry(Activity activity)
         {
-            var fromObjectId = activity.From?.Properties["aadObjectId"]?.ToString();
+            var fromObjectId = activity.From?.AadObjectId;
             var clientInfoEntity = activity.Entities?.Where(e => e.Type == "clientInfo")?.FirstOrDefault();
             var channelData = activity.GetChannelData<TeamsChannelData>();
 
