@@ -112,7 +112,7 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// provide logic for when members other than the bot
+        /// Provide logic for when members other than the bot
         /// join the conversation, such as your bot's welcome logic.
         /// </summary>
         /// <param name="membersAdded">A list of all the members added to the conversation, as
@@ -169,7 +169,7 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// provide logic for when members other than the bot
+        /// Provide logic for when members other than the bot
         /// leave the conversation, such as your bot's good-bye logic.
         /// </summary>
         /// <param name="membersRemoved">A list of all the members removed from the conversation, as
@@ -209,7 +209,7 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// provide logic specific to
+        /// Provide logic specific to
         /// <see cref="ActivityTypes.Message"/> activities, such as the conversational logic.
         /// Specifically the opt in and out operations.
         /// </summary>
