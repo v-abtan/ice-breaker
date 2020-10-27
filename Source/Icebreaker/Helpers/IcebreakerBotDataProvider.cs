@@ -8,6 +8,7 @@ namespace Icebreaker.Helpers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.DataContracts;
@@ -128,6 +129,38 @@ namespace Icebreaker.Helpers
             {
                 var documentUri = UriFactory.CreateDocumentUri(this.database.Id, this.usersCollection.Id, userId);
                 return await this.documentClient.ReadDocumentAsync<UserInfo>(documentUri, new RequestOptions { PartitionKey = new PartitionKey(userId) });
+            }
+            catch (Exception ex)
+            {
+                this.telemetryClient.TrackException(ex.InnerException);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Get the stored information about given users
+        /// </summary>
+        /// <param name="usersIdList">List of users id</param>
+        /// <returns>User information</returns>
+        public async Task<List<UserInfo>> GetUsersInfoAsync(List<string> usersIdList)
+        {
+            await this.EnsureInitializedAsync();
+
+            try
+            {
+                var collectionLink = UriFactory.CreateDocumentCollectionUri(this.database.Id, this.usersCollection.Id);
+                var query = this.documentClient.CreateDocumentQuery<UserInfo>(collectionLink, new FeedOptions { EnableCrossPartitionQuery = true })
+                    .Where(p => usersIdList.Contains(p.Id))
+                    .AsDocumentQuery();
+                var usersList = new List<UserInfo>();
+                while (query.HasMoreResults)
+                {
+                    // Note that ExecuteNextAsync can return many records in each call
+                    var response = await query.ExecuteNextAsync<UserInfo>();
+                    usersList.AddRange(response);
+                }
+
+                return usersList;
             }
             catch (Exception ex)
             {

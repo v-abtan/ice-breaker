@@ -37,7 +37,7 @@ namespace Icebreaker.Controllers
         /// <param name="key">API key</param>
         /// <returns>Success (1) or failure (-1) code</returns>
         [Route("api/processnow/{key}")]
-        public async Task<IHttpActionResult> Get([FromUri]string key)
+        public async Task<IHttpActionResult> GetAsync([FromUri]string key)
         {
             var isKeyMatch = object.Equals(key, CloudConfigurationManager.GetSetting("Key"));
             if (isKeyMatch)
@@ -46,7 +46,7 @@ namespace Icebreaker.Controllers
                 // This avoids a race condition in MicrosoftAppCredentials.GetTokenAsync that can lead it to return an expired token
                 await this.botCredentials.GetTokenAsync();
 
-                HostingEnvironment.QueueBackgroundWorkItem(ct => this.MakePairs());
+                HostingEnvironment.QueueBackgroundWorkItem(ct => this.MakePairsAsync());
                 return this.StatusCode(System.Net.HttpStatusCode.OK);
             }
             else
@@ -55,9 +55,9 @@ namespace Icebreaker.Controllers
             }
         }
 
-        private async Task<int> MakePairs()
+        private async Task<int> MakePairsAsync()
         {
-            return await this.bot.MakePairsAndNotify();
+            return await this.bot.MakePairsAndNotifyAsync();
         }
     }
 }

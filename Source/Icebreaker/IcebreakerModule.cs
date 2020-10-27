@@ -4,14 +4,19 @@
 
 namespace Icebreaker
 {
+    using System.Reflection;
+    using System.Web.Http;
     using Autofac;
+    using Autofac.Integration.WebApi;
     using Icebreaker.Helpers;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.Azure;
     using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.BotFramework;
     using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
     using Microsoft.Bot.Connector.Authentication;
+    using Module = Autofac.Module;
 
     /// <summary>
     /// Autofac Module
@@ -22,6 +27,13 @@ namespace Icebreaker
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
+
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+            builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
+
+            // The ConfigurationCredentialProvider will retrieve the MicrosoftAppId and
+            // MicrosoftAppPassword from Web.config
+            builder.RegisterType<ConfigurationCredentialProvider>().As<ICredentialProvider>().SingleInstance();
 
             builder.Register(c =>
             {

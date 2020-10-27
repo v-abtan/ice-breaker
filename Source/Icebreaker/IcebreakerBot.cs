@@ -85,6 +85,18 @@ namespace Icebreaker
             }
         }
 
+        /// <summary>
+        /// Invoked when a conversation update activity is received from the channel.
+        /// Conversation update activities are useful when it comes to responding to users being added to or removed from the channel.
+        /// For example, a bot could respond to a user being added by greeting the user.
+        /// </summary>
+        /// <param name="turnContext">A strongly-typed context object for this turn.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        /// <remarks>
+        /// In a derived class, override this method to add logic that applies to all conversation update activities.
+        /// </remarks>
         protected override async Task OnConversationUpdateActivityAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
             // conversation-update fires whenever a new 1:1 gets created between us and someone else as well
@@ -99,6 +111,21 @@ namespace Icebreaker
             await base.OnConversationUpdateActivityAsync(turnContext, cancellationToken);
         }
 
+        /// <summary>
+        /// Override this in a derived class to provide logic for when members other than the bot
+        /// join the conversation, such as your bot's welcome logic.
+        /// </summary>
+        /// <param name="membersAdded">A list of all the members added to the conversation, as
+        /// described by the conversation update activity.</param>
+        /// <param name="turnContext">A strongly-typed context object for this turn.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        /// <remarks>
+        /// When the <see cref="OnConversationUpdateActivityAsync(ITurnContext{IConversationUpdateActivity}, CancellationToken)"/>
+        /// method receives a conversation update activity that indicates one or more users other than the bot
+        /// are joining the conversation, it calls this method.
+        /// </remarks>
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
             if (membersAdded?.Count() > 0)
@@ -141,6 +168,21 @@ namespace Icebreaker
             await base.OnMembersAddedAsync(membersAdded, turnContext, cancellationToken);
         }
 
+        /// <summary>
+        /// Override this in a derived class to provide logic for when members other than the bot
+        /// leave the conversation, such as your bot's good-bye logic.
+        /// </summary>
+        /// <param name="membersRemoved">A list of all the members removed from the conversation, as
+        /// described by the conversation update activity.</param>
+        /// <param name="turnContext">A strongly-typed context object for this turn.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        /// <remarks>
+        /// When the <see cref="OnConversationUpdateActivityAsync(ITurnContext{IConversationUpdateActivity}, CancellationToken)"/>
+        /// method receives a conversation update activity that indicates one or more users other than the bot
+        /// are leaving the conversation, it calls this method.
+        /// </remarks>
         protected override async Task OnMembersRemovedAsync(IList<ChannelAccount> membersRemoved, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
             var message = turnContext.Activity;
@@ -166,18 +208,40 @@ namespace Icebreaker
             await base.OnMembersRemovedAsync(membersRemoved, turnContext, cancellationToken);
         }
 
+        /// <summary>
+        /// Override this in a derived class to provide logic specific to
+        /// <see cref="ActivityTypes.Message"/> activities, such as the conversational logic.
+        /// </summary>
+        /// <param name="turnContext">A strongly-typed context object for this turn.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects
+        /// or threads to receive notice of cancellation.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        /// <remarks>
+        /// When the <see cref="OnTurnAsync(ITurnContext, CancellationToken)"/>
+        /// method receives a message activity, it calls this method.
+        /// </remarks>
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             await this.HandleMessageActivityAsync(turnContext, cancellationToken);
             await base.OnMessageActivityAsync(turnContext, cancellationToken);
         }
 
+        /// <summary>
+        /// Get a new instance of connector client
+        /// </summary>
+        /// <param name="serviceUrl">Service url</param>
+        /// <returns>connector client instance</returns>
         private IConnectorClient GetConnectorClient(string serviceUrl)
         {
             AppCredentials.TrustServiceUrl(serviceUrl);
             return new ConnectorClient(new Uri(serviceUrl), this.appCredentials);
         }
 
+        /// <summary>
+        /// Get TeamsConnectorClient instance from an IConnectorClient.
+        /// </summary>
+        /// <param name="connectorClient">Generic IConnectorClient instance.</param>
+        /// <returns>Returns TeamsConnectorClient to interact with Teams operations.</returns>
         private ITeamsConnectorClient GetTeamsConnectorClient(IConnectorClient connectorClient)
         {
             if (connectorClient is ConnectorClient connectorClientImpl)
@@ -190,6 +254,12 @@ namespace Icebreaker
             }
         }
 
+        /// <summary>
+        /// Handle opt in/out operations by updating user preference in data store.
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
         private async Task HandleMessageActivityAsync(ITurnContext turnContext, CancellationToken cancellationToken)
         {
             try
@@ -284,37 +354,10 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// Log telemetry about the incoming activity.
-        /// </summary>
-        /// <param name="activity">The activity</param>
-        private void LogActivityTelemetry(Activity activity)
-        {
-            var fromObjectId = activity.From?.AadObjectId;
-            var clientInfoEntity = activity.Entities?.Where(e => e.Type == "clientInfo")?.FirstOrDefault();
-            var channelData = activity.GetChannelData<TeamsChannelData>();
-
-            var properties = new Dictionary<string, string>
-            {
-                { "ActivityId", activity.Id },
-                { "ActivityType", activity.Type },
-                { "UserAadObjectId", fromObjectId },
-                {
-                    "ConversationType",
-                    string.IsNullOrWhiteSpace(activity.Conversation?.ConversationType) ? "personal" : activity.Conversation.ConversationType
-                },
-                { "ConversationId", activity.Conversation?.Id },
-                { "TeamId", channelData?.Team?.Id },
-                { "Locale", clientInfoEntity?.Properties["locale"]?.ToString() },
-                { "Platform", clientInfoEntity?.Properties["platform"]?.ToString() }
-            };
-            this.telemetryClient.TrackEvent("UserActivity", properties);
-        }
-
-        /// <summary>
         /// Generate pairups and send pairup notifications.
         /// </summary>
         /// <returns>The number of pairups that were made</returns>
-        public async Task<int> MakePairsAndNotify()
+        public async Task<int> MakePairsAndNotifyAsync()
         {
             this.telemetryClient.TrackTrace("Making pairups");
 
@@ -346,7 +389,7 @@ namespace Icebreaker
                         var connectorClient = this.GetConnectorClient(team.ServiceUrl);
 
                         var teamName = await this.GetTeamNameByIdAsync(connectorClient, team.TeamId);
-                        var optedInUsers = await this.GetOptedInUsers(connectorClient, team);
+                        var optedInUsers = await this.GetOptedInUsersAsync(connectorClient, team);
 
                         foreach (var pair in this.MakePairs(optedInUsers).Take(this.maxPairUpsPerTeam))
                         {
@@ -410,7 +453,7 @@ namespace Icebreaker
             if (userThatJustJoined != null)
             {
                 var welcomeMessageCard = WelcomeNewMemberAdaptiveCard.GetCard(teamName, userThatJustJoined.Name, this.botDisplayName, installedTeam.InstallerName);
-                await this.NotifyUser(turnContext, welcomeMessageCard, userThatJustJoined, tenantId, cancellationToken);
+                await this.NotifyUserAsync(turnContext, welcomeMessageCard, userThatJustJoined, tenantId, cancellationToken);
             }
             else
             {
@@ -432,7 +475,7 @@ namespace Icebreaker
 
             var teamName = turnContext.Activity.TeamsGetTeamInfo().Name;
             var welcomeTeamMessageCard = WelcomeTeamAdaptiveCard.GetCard(teamName, this.botDisplayName, botInstaller);
-            await this.NotifyTeam(turnContext, welcomeTeamMessageCard, teamId, cancellationToken);
+            await this.NotifyTeamAsync(turnContext, welcomeTeamMessageCard, teamId, cancellationToken);
         }
 
         /// <summary>
@@ -533,10 +576,10 @@ namespace Icebreaker
         /// <summary>
         /// Notify a pairup.
         /// </summary>
-        /// <param name="teamModel"></param>
-        /// <param name="teamName"></param>
+        /// <param name="teamModel">DB team model info.</param>
+        /// <param name="teamName">MS-Teams team name</param>
         /// <param name="pair">The pairup</param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Number of users notified successfully</returns>
         private async Task<int> NotifyPairAsync(TeamInstallInfo teamModel, string teamName, Tuple<ChannelAccount, ChannelAccount> pair, CancellationToken cancellationToken)
         {
@@ -553,21 +596,41 @@ namespace Icebreaker
 
             // Send notifications and return the number that was successful
             var notifyResults = await Task.WhenAll(
-                this.NotifyUser((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson1, teamsPerson1, teamModel.TenantId, cancellationToken),
-                this.NotifyUser((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson2, teamsPerson2, teamModel.TenantId, cancellationToken));
+                this.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson1, teamsPerson1, teamModel.TenantId, cancellationToken),
+                this.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson2, teamsPerson2, teamModel.TenantId, cancellationToken));
             return notifyResults.Count(wasNotified => wasNotified);
         }
 
-        private async Task<bool> NotifyUser(ITurnContext turnContext, string cardToSend, ChannelAccount user, string tenantId, CancellationToken cancellationToken)
+        /// <summary>
+        /// Send a card to a user in direct conversation
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cardToSend">The actual welcome card (for the team)</param>
+        /// <param name="user">User channel account</param>
+        /// <param name="tenantId">Tenant id</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>True/False operation status</returns>
+        private async Task<bool> NotifyUserAsync(ITurnContext turnContext, string cardToSend, ChannelAccount user, string tenantId, CancellationToken cancellationToken)
         {
             var botFrameworkAdapter = (BotFrameworkHttpAdapter)turnContext.Adapter;
             var teamsChannelId = turnContext.Activity.TeamsGetChannelId();
             var serviceUrl = turnContext.Activity.ServiceUrl;
 
-            return await this.NotifyUser(botFrameworkAdapter, serviceUrl, teamsChannelId, cardToSend, user, tenantId, cancellationToken);
+            return await this.NotifyUserAsync(botFrameworkAdapter, serviceUrl, teamsChannelId, cardToSend, user, tenantId, cancellationToken);
         }
 
-        private async Task<bool> NotifyUser(BotFrameworkHttpAdapter botFrameworkAdapter, string serviceUrl, string teamsChannelId, string cardToSend, ChannelAccount user, string tenantId, CancellationToken cancellationToken)
+        /// <summary>
+        /// Send a card to a user in direct conversation
+        /// </summary>
+        /// <param name="botFrameworkAdapter">Bot adapter</param>
+        /// <param name="serviceUrl">Service url</param>
+        /// <param name="teamsChannelId">Team channel id where the bot is installed</param>
+        /// <param name="cardToSend">The actual welcome card (for the team)</param>
+        /// <param name="user">User channel account</param>
+        /// <param name="tenantId">Tenant id</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>True/False operation status</returns>
+        private async Task<bool> NotifyUserAsync(BotFrameworkHttpAdapter botFrameworkAdapter, string serviceUrl, string teamsChannelId, string cardToSend, ChannelAccount user, string tenantId, CancellationToken cancellationToken)
         {
             this.telemetryClient.TrackTrace($"Sending notification to user {user.Id}");
 
@@ -638,12 +701,12 @@ namespace Icebreaker
         /// Method that will send out the message in the General channel of the team
         /// that this bot has been installed to
         /// </summary>
-        /// <param name="turnContext"></param>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cardToSend">The actual welcome card (for the team)</param>
         /// <param name="teamId">The team id</param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A tracking task</returns>
-        private async Task NotifyTeam(ITurnContext turnContext, string cardToSend, string teamId, CancellationToken cancellationToken)
+        private async Task NotifyTeamAsync(ITurnContext turnContext, string cardToSend, string teamId, CancellationToken cancellationToken)
         {
             this.telemetryClient.TrackTrace($"Sending notification to team {teamId}");
 
@@ -687,22 +750,27 @@ namespace Icebreaker
             }
         }
 
-        private async Task<List<ChannelAccount>> GetOptedInUsers(IConnectorClient connectorClient, TeamInstallInfo teamInfo)
+        /// <summary>
+        /// Get list of opted in users to start matching process
+        /// </summary>
+        /// <param name="connectorClient">The connector client</param>
+        /// <param name="teamInfo">The team that the bot has been installed to</param>
+        /// <returns>Opted in users' channels</returns>
+        private async Task<List<ChannelAccount>> GetOptedInUsersAsync(IConnectorClient connectorClient, TeamInstallInfo teamInfo)
         {
             // Pull the roster of specified team and then remove everyone who has opted out explicitly
             var members = await connectorClient.Conversations.GetConversationMembersAsync(teamInfo.TeamId);
             this.telemetryClient.TrackTrace($"Found {members.Count} in team {teamInfo.TeamId}");
 
-            var tasks = members
+            var teamMembersIdList = members
                 .Where(m => m != null)
                 .Select(m => JObject.FromObject(m).ToObject<TeamsChannelAccount>()?.AadObjectId)
                 .Where(memberObjectId => memberObjectId != null)
-                .Select(memberObjectId => this.dataProvider.GetUserInfoAsync(memberObjectId))
                 .ToList();
-            var results = await Task.WhenAll(tasks);
+            var dbMembers = await this.dataProvider.GetUsersInfoAsync(teamMembersIdList);
 
             return members
-                .Zip(results, (member, userInfo) => ((userInfo == null) || userInfo.OptedIn) ? member : null)
+                .Zip(dbMembers, (member, userInfo) => ((userInfo == null) || userInfo.OptedIn) ? member : null)
                 .Where(m => m != null)
                 .ToList();
         }
@@ -729,6 +797,11 @@ namespace Icebreaker
             return pairs;
         }
 
+        /// <summary>
+        /// Randomize list of users
+        /// </summary>
+        /// <typeparam name="T">Generic item type</typeparam>
+        /// <param name="items">List of users to randomize</param>
         private void Randomize<T>(IList<T> items)
         {
             Random rand = new Random(Guid.NewGuid().GetHashCode());
@@ -742,6 +815,33 @@ namespace Icebreaker
                 items[i] = items[j];
                 items[j] = temp;
             }
+        }
+
+        /// <summary>
+        /// Log telemetry about the incoming activity.
+        /// </summary>
+        /// <param name="activity">The activity</param>
+        private void LogActivityTelemetry(Activity activity)
+        {
+            var fromObjectId = activity.From?.AadObjectId;
+            var clientInfoEntity = activity.Entities?.Where(e => e.Type == "clientInfo")?.FirstOrDefault();
+            var channelData = activity.GetChannelData<TeamsChannelData>();
+
+            var properties = new Dictionary<string, string>
+            {
+                { "ActivityId", activity.Id },
+                { "ActivityType", activity.Type },
+                { "UserAadObjectId", fromObjectId },
+                {
+                    "ConversationType",
+                    string.IsNullOrWhiteSpace(activity.Conversation?.ConversationType) ? "personal" : activity.Conversation.ConversationType
+                },
+                { "ConversationId", activity.Conversation?.Id },
+                { "TeamId", channelData?.Team?.Id },
+                { "Locale", clientInfoEntity?.Properties["locale"]?.ToString() },
+                { "Platform", clientInfoEntity?.Properties["platform"]?.ToString() }
+            };
+            this.telemetryClient.TrackEvent("UserActivity", properties);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Icebreaker
             this.bot = bot;
         }
 
-        public async Task<HttpResponseMessage> Post()
+        public async Task<HttpResponseMessage> PostAsync()
         {
             var response = new HttpResponseMessage();
 
@@ -40,56 +40,5 @@ namespace Icebreaker
             await this.adapter.ProcessAsync(this.Request, response, this.bot);
             return response;
         }
-
-        /*
-        /// <summary>
-        /// POST: api/messages
-        /// Receive a message from a user and reply to it
-        /// </summary>
-        /// <param name="activity">The incoming activity</param>
-        /// <returns>Task that resolves to the HTTP response message</returns>
-        public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
-        {
-            this.LogActivityTelemetry(activity);
-
-            using (var connectorClient = new ConnectorClient(new Uri(activity.ServiceUrl)))
-            {
-                if (activity.Type == ActivityTypes.Message)
-                {
-                    await this.HandleMessageActivity(connectorClient, activity);
-                }
-                else
-                {
-                    await this.HandleSystemActivity(connectorClient, activity);
-                }
-            }
-
-            return this.Request.CreateResponse(HttpStatusCode.OK);
-        }
-
-        
-        private async Task HandleSystemActivity(ConnectorClient connectorClient, Activity message)
-        {
-            this.telemetryClient.TrackTrace("Processing system message");
-
-            try
-            {
-                var teamsChannelData = message.GetChannelData<TeamsChannelData>();
-                var tenantId = teamsChannelData.Tenant.Id;
-
-                if (message.Type == ActivityTypes.ConversationUpdate)
-                {
-        
-                }
-            }
-            catch (Exception ex)
-            {
-                this.telemetryClient.TrackTrace($"Error while handling system activity: {ex.Message}", SeverityLevel.Warning);
-                this.telemetryClient.TrackException(ex);
-                throw;
-            }
-        }
-        */
-
     }
 }
