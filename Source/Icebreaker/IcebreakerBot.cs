@@ -112,7 +112,7 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// Override this in a derived class to provide logic for when members other than the bot
+        /// provide logic for when members other than the bot
         /// join the conversation, such as your bot's welcome logic.
         /// </summary>
         /// <param name="membersAdded">A list of all the members added to the conversation, as
@@ -169,7 +169,7 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// Override this in a derived class to provide logic for when members other than the bot
+        /// provide logic for when members other than the bot
         /// leave the conversation, such as your bot's good-bye logic.
         /// </summary>
         /// <param name="membersRemoved">A list of all the members removed from the conversation, as
@@ -209,8 +209,9 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// Override this in a derived class to provide logic specific to
+        /// provide logic specific to
         /// <see cref="ActivityTypes.Message"/> activities, such as the conversational logic.
+        /// Specifically the opt in and out operations.
         /// </summary>
         /// <param name="turnContext">A strongly-typed context object for this turn.</param>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects
