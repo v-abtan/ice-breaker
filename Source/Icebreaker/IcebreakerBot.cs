@@ -385,7 +385,6 @@ namespace Icebreaker
 
                     try
                     {
-                        AppCredentials.TrustServiceUrl(team.ServiceUrl);
                         var connectorClient = this.GetConnectorClient(team.ServiceUrl);
 
                         var teamName = await this.GetTeamNameByIdAsync(connectorClient, team.TeamId);
@@ -763,16 +762,25 @@ namespace Icebreaker
             this.telemetryClient.TrackTrace($"Found {members.Count} in team {teamInfo.TeamId}");
 
             var teamMembersIdList = members
-                .Where(m => m != null)
-                .Select(m => JObject.FromObject(m).ToObject<TeamsChannelAccount>()?.AadObjectId)
+                .Where(member => member != null)
+                .Select(this.GetChannelUserObjectId)
                 .Where(memberObjectId => memberObjectId != null)
                 .ToList();
             var dbMembers = await this.dataProvider.GetUsersInfoAsync(teamMembersIdList);
 
             return members
-                .Zip(dbMembers, (member, userInfo) => ((userInfo == null) || userInfo.OptedIn) ? member : null)
-                .Where(m => m != null)
+                .Where(member => member != null)
+                .Where(member =>
+                {
+                    var userInfo = dbMembers.FirstOrDefault(m => m.Id == this.GetChannelUserObjectId(member));
+                    return userInfo == null || userInfo.OptedIn;
+                })
                 .ToList();
+        }
+
+        private string GetChannelUserObjectId(ChannelAccount m)
+        {
+            return JObject.FromObject(m).ToObject<TeamsChannelAccount>()?.AadObjectId;
         }
 
         private List<Tuple<ChannelAccount, ChannelAccount>> MakePairs(List<ChannelAccount> users)
