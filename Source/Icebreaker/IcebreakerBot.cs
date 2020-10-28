@@ -766,14 +766,15 @@ namespace Icebreaker
                 .Select(this.GetChannelUserObjectId)
                 .Where(memberObjectId => memberObjectId != null)
                 .ToList();
-            var dbMembers = await this.dataProvider.GetUsersInfoAsync(teamMembersIdList);
+            var dbMembers = (await this.dataProvider.GetUsersInfoAsync(teamMembersIdList))
+                .ToDictionary(m => m.Id, m => m.OptedIn);
 
             return members
                 .Where(member => member != null)
                 .Where(member =>
                 {
-                    var userInfo = dbMembers.FirstOrDefault(m => m.Id == this.GetChannelUserObjectId(member));
-                    return userInfo == null || userInfo.OptedIn;
+                    var memberObjectId = this.GetChannelUserObjectId(member);
+                    return !dbMembers.ContainsKey(memberObjectId) || dbMembers[memberObjectId];
                 })
                 .ToList();
         }
