@@ -34,7 +34,7 @@ namespace Icebreaker
             };
 
             // Web API configuration and services
-            config.DependencyResolver = GetResolver();
+            config.DependencyResolver = GetDependencyResolver();
 
             // Web API routes
             config.MapHttpAttributeRoutes();
@@ -49,7 +49,7 @@ namespace Icebreaker
         /// Build container and return dependency resolver
         /// </summary>
         /// <returns>Dependency resolver</returns>
-        private static IDependencyResolver GetResolver()
+        private static IDependencyResolver GetDependencyResolver()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new IcebreakerModule());

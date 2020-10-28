@@ -70,9 +70,7 @@ namespace Icebreaker
         /// <remarks>
         /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.activityhandler.onturnasync?view=botbuilder-dotnet-stable.
         /// </remarks>
-        public override async Task OnTurnAsync(
-            ITurnContext turnContext,
-            CancellationToken cancellationToken = default)
+        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
@@ -245,8 +243,9 @@ namespace Icebreaker
         /// <returns>Returns TeamsConnectorClient to interact with Teams operations.</returns>
         private ITeamsConnectorClient GetTeamsConnectorClient(IConnectorClient connectorClient)
         {
-            if (connectorClient is ConnectorClient connectorClientImpl)
+            if (connectorClient is ConnectorClient)
             {
+                var connectorClientImpl = (ConnectorClient)connectorClient;
                 return new TeamsConnectorClient(connectorClientImpl.BaseUri, connectorClientImpl.Credentials, connectorClientImpl.HttpClient);
             }
             else
