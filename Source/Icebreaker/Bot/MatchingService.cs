@@ -22,7 +22,6 @@ namespace Icebreaker
     using Microsoft.Bot.Connector.Teams;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
-    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
     /// <summary>
@@ -31,31 +30,30 @@ namespace Icebreaker
     public class MatchingService
     {
         private readonly IcebreakerBotDataProvider dataProvider;
+        private readonly ConversationHelper conversationHelper;
         private readonly MicrosoftAppCredentials appCredentials;
         private readonly TelemetryClient telemetryClient;
         private readonly IBotFrameworkHttpAdapter botAdapter;
         private readonly int maxPairUpsPerTeam;
         private readonly string botDisplayName;
-        private readonly string botId;
-        private readonly bool isTesting;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IcebreakerBot"/> class.
         /// </summary>
         /// <param name="dataProvider">The data provider to use</param>
+        /// <param name="conversationHelper">Conversation helper instance to notify team members</param>
         /// <param name="appCredentials">Microsoft app credentials to use.</param>
         /// <param name="telemetryClient">The telemetry client to use</param>
         /// <param name="botAdapter">Bot adapter.</param>
-        public MatchingService(IcebreakerBotDataProvider dataProvider, MicrosoftAppCredentials appCredentials, TelemetryClient telemetryClient, IBotFrameworkHttpAdapter botAdapter)
+        public MatchingService(IcebreakerBotDataProvider dataProvider, ConversationHelper conversationHelper, MicrosoftAppCredentials appCredentials, TelemetryClient telemetryClient, IBotFrameworkHttpAdapter botAdapter)
         {
             this.dataProvider = dataProvider;
+            this.conversationHelper = conversationHelper;
             this.appCredentials = appCredentials;
             this.telemetryClient = telemetryClient;
             this.botAdapter = botAdapter;
             this.maxPairUpsPerTeam = Convert.ToInt32(CloudConfigurationManager.GetSetting("MaxPairUpsPerTeam"));
             this.botDisplayName = CloudConfigurationManager.GetSetting("BotDisplayName");
-            this.botId = CloudConfigurationManager.GetSetting("MicrosoftAppId");
-            this.isTesting = Convert.ToBoolean(CloudConfigurationManager.GetSetting("Testing"));
         }
 
         /// <summary>
@@ -157,16 +155,6 @@ namespace Icebreaker
         }
 
         /// <summary>
-        /// Method that will return the information of the installed team
-        /// </summary>
-        /// <param name="teamId">The team id</param>
-        /// <returns>The team that the bot has been installed to</returns>
-        public Task<TeamInstallInfo> GetInstalledTeam(string teamId)
-        {
-            return this.dataProvider.GetInstalledTeamAsync(teamId);
-        }
-
-        /// <summary>
         /// Get the name of a team.
         /// </summary>
         /// <param name="connectorClient">The connector client</param>
@@ -202,87 +190,9 @@ namespace Icebreaker
 
             // Send notifications and return the number that was successful
             var notifyResults = await Task.WhenAll(
-                this.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson1, teamsPerson1, teamModel.TenantId, cancellationToken),
-                this.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson2, teamsPerson2, teamModel.TenantId, cancellationToken));
+                this.conversationHelper.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson1, teamsPerson1, teamModel.TenantId, cancellationToken),
+                this.conversationHelper.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson2, teamsPerson2, teamModel.TenantId, cancellationToken));
             return notifyResults.Count(wasNotified => wasNotified);
-        }
-
-        /// <summary>
-        /// Send a card to a user in direct conversation
-        /// </summary>
-        /// <param name="botFrameworkAdapter">Bot adapter</param>
-        /// <param name="serviceUrl">Service url</param>
-        /// <param name="teamsChannelId">Team channel id where the bot is installed</param>
-        /// <param name="cardToSend">The actual welcome card (for the team)</param>
-        /// <param name="user">User channel account</param>
-        /// <param name="tenantId">Tenant id</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>True/False operation status</returns>
-        private async Task<bool> NotifyUserAsync(BotFrameworkHttpAdapter botFrameworkAdapter, string serviceUrl, string teamsChannelId, string cardToSend, ChannelAccount user, string tenantId, CancellationToken cancellationToken)
-        {
-            this.telemetryClient.TrackTrace($"Sending notification to user {user.Id}");
-
-            try
-            {
-                // construct the activity we want to post
-                var welcomeActivity = new Activity()
-                {
-                    Type = ActivityTypes.Message,
-                    Attachments = new List<Attachment>()
-                    {
-                        new Attachment()
-                        {
-                            ContentType = "application/vnd.microsoft.card.adaptive",
-                            Content = JsonConvert.DeserializeObject(cardToSend),
-                        }
-                    }
-                };
-
-                // conversation parameters
-                var conversationParameters = new ConversationParameters
-                {
-                    Bot = new ChannelAccount { Id = this.botId },
-                    Members = new[] { user },
-                    ChannelData = new TeamsChannelData
-                    {
-                        Tenant = new TenantInfo(tenantId),
-                    }
-                };
-
-                if (!this.isTesting)
-                {
-                    // shoot the activity over
-                    await botFrameworkAdapter.CreateConversationAsync(
-                        teamsChannelId,
-                        serviceUrl,
-                        this.appCredentials,
-                        conversationParameters,
-                        async (newTurnContext, newCancellationToken) =>
-                        {
-                            // Get the conversationReference
-                            var conversationReference = newTurnContext.Activity.GetConversationReference();
-
-                            // Send the proactive welcome message
-                            await botFrameworkAdapter.ContinueConversationAsync(
-                                this.appCredentials.MicrosoftAppId,
-                                conversationReference,
-                                async (conversationTurnContext, conversationCancellationToken) =>
-                                {
-                                    await conversationTurnContext.SendActivityAsync(welcomeActivity, conversationCancellationToken);
-                                },
-                                cancellationToken);
-                        },
-                        cancellationToken).ConfigureAwait(false);
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                this.telemetryClient.TrackTrace($"Error sending notification to user: {ex.Message}", SeverityLevel.Warning);
-                this.telemetryClient.TrackException(ex);
-                return false;
-            }
         }
 
         /// <summary>

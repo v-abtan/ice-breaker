@@ -49,7 +49,7 @@ namespace Icebreaker
             builder.RegisterType<IcebreakerBot>().As<IBot>()
                 .SingleInstance();
 
-            builder.RegisterType<IcebreakerBot>()
+            builder.RegisterType<MatchingService>()
                 .SingleInstance();
 
             builder.RegisterType<IcebreakerBotDataProvider>()

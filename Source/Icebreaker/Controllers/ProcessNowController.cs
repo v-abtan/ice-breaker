@@ -17,17 +17,17 @@ namespace Icebreaker.Controllers
     /// </summary>
     public class ProcessNowController : ApiController
     {
-        private readonly IcebreakerBot bot;
+        private readonly MatchingService matchingService;
         private readonly MicrosoftAppCredentials botCredentials;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessNowController"/> class.
         /// </summary>
-        /// <param name="bot">The Icebreaker bot instance</param>
+        /// <param name="matchingService">Matching service contains logic to pair and match users</param>
         /// <param name="botCredentials">The bot AAD credentials</param>
-        public ProcessNowController(IcebreakerBot bot, MicrosoftAppCredentials botCredentials)
+        public ProcessNowController(MatchingService matchingService, MicrosoftAppCredentials botCredentials)
         {
-            this.bot = bot;
+            this.matchingService = matchingService;
             this.botCredentials = botCredentials;
         }
 
@@ -57,7 +57,7 @@ namespace Icebreaker.Controllers
 
         private async Task<int> MakePairsAsync()
         {
-            return await this.bot.MakePairsAndNotifyAsync();
+            return await this.matchingService.MakePairsAndNotifyAsync();
         }
     }
 }
