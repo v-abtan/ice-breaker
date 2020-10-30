@@ -277,7 +277,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Bot\IcebreakerBo.cs" />
+    <Compile Include="Bot\IcebreakerBot.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\ProcessNowController.cs" />
     <Compile Include="Global.asax.cs">
