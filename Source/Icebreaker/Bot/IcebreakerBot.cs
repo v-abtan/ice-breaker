@@ -49,12 +49,11 @@ namespace Icebreaker
         /// <param name="appCredentials">Microsoft app credentials to use.</param>
         /// <param name="telemetryClient">The telemetry client to use</param>
         /// <param name="botAdapter">Bot adapter.</param>
-        public IcebreakerBot(IcebreakerBotDataProvider dataProvider, MicrosoftAppCredentials appCredentials, TelemetryClient telemetryClient, IBotFrameworkHttpAdapter botAdapter)
+        public IcebreakerBot(IcebreakerBotDataProvider dataProvider, MicrosoftAppCredentials appCredentials, TelemetryClient telemetryClient)
         {
             this.dataProvider = dataProvider;
             this.appCredentials = appCredentials;
             this.telemetryClient = telemetryClient;
-            this.botAdapter = botAdapter;
             this.maxPairUpsPerTeam = Convert.ToInt32(CloudConfigurationManager.GetSetting("MaxPairUpsPerTeam"));
             this.botDisplayName = CloudConfigurationManager.GetSetting("BotDisplayName");
             this.botId = CloudConfigurationManager.GetSetting("MicrosoftAppId");
@@ -746,83 +745,6 @@ namespace Icebreaker
             {
                 this.telemetryClient.TrackTrace($"Error sending notification to team: {ex.Message}", SeverityLevel.Warning);
                 this.telemetryClient.TrackException(ex);
-            }
-        }
-
-        /// <summary>
-        /// Get list of opted in users to start matching process
-        /// </summary>
-        /// <param name="connectorClient">The connector client</param>
-        /// <param name="teamInfo">The team that the bot has been installed to</param>
-        /// <returns>Opted in users' channels</returns>
-        private async Task<List<ChannelAccount>> GetOptedInUsersAsync(IConnectorClient connectorClient, TeamInstallInfo teamInfo)
-        {
-            // Pull the roster of specified team and then remove everyone who has opted out explicitly
-            var members = await connectorClient.Conversations.GetConversationMembersAsync(teamInfo.TeamId);
-            this.telemetryClient.TrackTrace($"Found {members.Count} in team {teamInfo.TeamId}");
-
-            var teamMembersIdList = members
-                .Where(member => member != null)
-                .Select(this.GetChannelUserObjectId)
-                .Where(memberObjectId => memberObjectId != null)
-                .ToList();
-            var dbMembers = (await this.dataProvider.GetUsersInfoAsync(teamMembersIdList))
-                .ToDictionary(m => m.Id, m => m.OptedIn);
-
-            return members
-                .Where(member => member != null)
-                .Where(member =>
-                {
-                    var memberObjectId = this.GetChannelUserObjectId(member);
-                    return !dbMembers.ContainsKey(memberObjectId) || dbMembers[memberObjectId];
-                })
-                .ToList();
-        }
-
-        private string GetChannelUserObjectId(ChannelAccount m)
-        {
-            return JObject.FromObject(m).ToObject<TeamsChannelAccount>()?.AadObjectId;
-        }
-
-        private List<Tuple<ChannelAccount, ChannelAccount>> MakePairs(List<ChannelAccount> users)
-        {
-            if (users.Count > 1)
-            {
-                this.telemetryClient.TrackTrace($"Making {users.Count / 2} pairs among {users.Count} users");
-            }
-            else
-            {
-                this.telemetryClient.TrackTrace($"Pairs could not be made because there is only 1 user in the team");
-            }
-
-            this.Randomize(users);
-
-            var pairs = new List<Tuple<ChannelAccount, ChannelAccount>>();
-            for (int i = 0; i < users.Count - 1; i += 2)
-            {
-                pairs.Add(new Tuple<ChannelAccount, ChannelAccount>(users[i], users[i + 1]));
-            }
-
-            return pairs;
-        }
-
-        /// <summary>
-        /// Randomize list of users
-        /// </summary>
-        /// <typeparam name="T">Generic item type</typeparam>
-        /// <param name="items">List of users to randomize</param>
-        private void Randomize<T>(IList<T> items)
-        {
-            Random rand = new Random(Guid.NewGuid().GetHashCode());
-
-            // For each spot in the array, pick
-            // a random item to swap into that spot.
-            for (int i = 0; i < items.Count - 1; i++)
-            {
-                int j = rand.Next(i, items.Count);
-                T temp = items[i];
-                items[i] = items[j];
-                items[j] = temp;
             }
         }
 
