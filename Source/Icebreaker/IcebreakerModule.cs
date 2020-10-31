@@ -46,6 +46,9 @@ namespace Icebreaker
             builder.RegisterType<BotFrameworkHttpAdapter>().As<IBotFrameworkHttpAdapter>()
                 .SingleInstance();
 
+            builder.RegisterType<ConversationHelper>()
+                .SingleInstance();
+
             builder.RegisterType<IcebreakerBot>().As<IBot>()
                 .SingleInstance();
 
