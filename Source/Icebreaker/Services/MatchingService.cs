@@ -4,7 +4,7 @@
 // </copyright>
 //----------------------------------------------------------------------------------------------
 
-namespace Icebreaker
+namespace Icebreaker.Services
 {
     using System;
     using System.Collections.Generic;
@@ -38,7 +38,7 @@ namespace Icebreaker
         private readonly string botDisplayName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IcebreakerBot"/> class.
+        /// Initializes a new instance of the <see cref="MatchingService"/> class.
         /// </summary>
         /// <param name="dataProvider">The data provider to use</param>
         /// <param name="conversationHelper">Conversation helper instance to notify team members</param>
@@ -54,35 +54,6 @@ namespace Icebreaker
             this.botAdapter = (BotFrameworkHttpAdapter)botAdapter;
             this.maxPairUpsPerTeam = Convert.ToInt32(CloudConfigurationManager.GetSetting("MaxPairUpsPerTeam"));
             this.botDisplayName = CloudConfigurationManager.GetSetting("BotDisplayName");
-        }
-
-        /// <summary>
-        /// Get a new instance of connector client
-        /// </summary>
-        /// <param name="serviceUrl">Service url</param>
-        /// <returns>connector client instance</returns>
-        private IConnectorClient GetConnectorClient(string serviceUrl)
-        {
-            AppCredentials.TrustServiceUrl(serviceUrl);
-            return new ConnectorClient(new Uri(serviceUrl), this.appCredentials);
-        }
-
-        /// <summary>
-        /// Get TeamsConnectorClient instance from an IConnectorClient.
-        /// </summary>
-        /// <param name="connectorClient">Generic IConnectorClient instance.</param>
-        /// <returns>Returns TeamsConnectorClient to interact with Teams operations.</returns>
-        private ITeamsConnectorClient GetTeamsConnectorClient(IConnectorClient connectorClient)
-        {
-            if (connectorClient is ConnectorClient)
-            {
-                var connectorClientImpl = (ConnectorClient)connectorClient;
-                return new TeamsConnectorClient(connectorClientImpl.BaseUri, connectorClientImpl.Credentials, connectorClientImpl.HttpClient);
-            }
-            else
-            {
-                return new TeamsConnectorClient(connectorClient.BaseUri, connectorClient.Credentials);
-            }
         }
 
         /// <summary>
@@ -152,6 +123,35 @@ namespace Icebreaker
 
             this.telemetryClient.TrackTrace($"Made {pairsNotifiedCount} pairups, {usersNotifiedCount} notifications sent");
             return pairsNotifiedCount;
+        }
+
+        /// <summary>
+        /// Get a new instance of connector client
+        /// </summary>
+        /// <param name="serviceUrl">Service url</param>
+        /// <returns>connector client instance</returns>
+        private IConnectorClient GetConnectorClient(string serviceUrl)
+        {
+            AppCredentials.TrustServiceUrl(serviceUrl);
+            return new ConnectorClient(new Uri(serviceUrl), this.appCredentials);
+        }
+
+        /// <summary>
+        /// Get TeamsConnectorClient instance from an IConnectorClient.
+        /// </summary>
+        /// <param name="connectorClient">Generic IConnectorClient instance.</param>
+        /// <returns>Returns TeamsConnectorClient to interact with Teams operations.</returns>
+        private ITeamsConnectorClient GetTeamsConnectorClient(IConnectorClient connectorClient)
+        {
+            if (connectorClient is ConnectorClient)
+            {
+                var connectorClientImpl = (ConnectorClient)connectorClient;
+                return new TeamsConnectorClient(connectorClientImpl.BaseUri, connectorClientImpl.Credentials, connectorClientImpl.HttpClient);
+            }
+            else
+            {
+                return new TeamsConnectorClient(connectorClient.BaseUri, connectorClient.Credentials);
+            }
         }
 
         /// <summary>
@@ -225,11 +225,21 @@ namespace Icebreaker
                 .ToList();
         }
 
-        private string GetChannelUserObjectId(ChannelAccount m)
+        /// <summary>
+        /// Extract user Aad object id from channel account
+        /// </summary>
+        /// <param name="account">User channel account</param>
+        /// <returns>Aad object id Guid value</returns>
+        private string GetChannelUserObjectId(ChannelAccount account)
         {
-            return JObject.FromObject(m).ToObject<TeamsChannelAccount>()?.AadObjectId;
+            return JObject.FromObject(account).ToObject<TeamsChannelAccount>()?.AadObjectId;
         }
 
+        /// <summary>
+        /// Pair list of users into groups of 2 users per group
+        /// </summary>
+        /// <param name="users">Users accounts</param>
+        /// <returns>List of pairs</returns>
         private List<Tuple<ChannelAccount, ChannelAccount>> MakePairs(List<ChannelAccount> users)
         {
             if (users.Count > 1)

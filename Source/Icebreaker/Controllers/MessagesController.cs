@@ -4,7 +4,7 @@
 // </copyright>
 //----------------------------------------------------------------------------------------------
 
-namespace Icebreaker
+namespace Icebreaker.Controllers
 {
     using System.Net.Http;
     using System.Threading.Tasks;

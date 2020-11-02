@@ -8,7 +8,9 @@ namespace Icebreaker
     using System.Web.Http;
     using Autofac;
     using Autofac.Integration.WebApi;
+    using Icebreaker.Bot;
     using Icebreaker.Helpers;
+    using Icebreaker.Services;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.Azure;
