@@ -33,7 +33,7 @@ namespace Icebreaker
         private readonly ConversationHelper conversationHelper;
         private readonly MicrosoftAppCredentials appCredentials;
         private readonly TelemetryClient telemetryClient;
-        private readonly IBotFrameworkHttpAdapter botAdapter;
+        private readonly BotFrameworkHttpAdapter botAdapter;
         private readonly int maxPairUpsPerTeam;
         private readonly string botDisplayName;
 
@@ -51,7 +51,7 @@ namespace Icebreaker
             this.conversationHelper = conversationHelper;
             this.appCredentials = appCredentials;
             this.telemetryClient = telemetryClient;
-            this.botAdapter = botAdapter;
+            this.botAdapter = (BotFrameworkHttpAdapter)botAdapter;
             this.maxPairUpsPerTeam = Convert.ToInt32(CloudConfigurationManager.GetSetting("MaxPairUpsPerTeam"));
             this.botDisplayName = CloudConfigurationManager.GetSetting("BotDisplayName");
         }
@@ -190,8 +190,8 @@ namespace Icebreaker
 
             // Send notifications and return the number that was successful
             var notifyResults = await Task.WhenAll(
-                this.conversationHelper.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson1, teamsPerson1, teamModel.TenantId, cancellationToken),
-                this.conversationHelper.NotifyUserAsync((BotFrameworkHttpAdapter)this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson2, teamsPerson2, teamModel.TenantId, cancellationToken));
+                this.conversationHelper.NotifyUserAsync(this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson1, teamsPerson1, teamModel.TenantId, cancellationToken),
+                this.conversationHelper.NotifyUserAsync(this.botAdapter, teamModel.ServiceUrl, teamModel.TeamId, cardForPerson2, teamsPerson2, teamModel.TenantId, cancellationToken));
             return notifyResults.Count(wasNotified => wasNotified);
         }
 
