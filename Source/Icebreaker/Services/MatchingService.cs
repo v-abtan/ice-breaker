@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------------------------
-// <copyright file="IcebreakerBot.cs" company="Microsoft">
+// <copyright file="MatchingService.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 //----------------------------------------------------------------------------------------------
