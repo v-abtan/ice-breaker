@@ -1,14 +1,19 @@
-﻿using System.IO;
-using AdaptiveCards.Templating;
+﻿// <copyright file="CardTemplateHelper.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
+// </copyright>
 
 namespace Icebreaker.Helpers
 {
+    using System.IO;
+    using System.Web.Hosting;
+    using global::AdaptiveCards.Templating;
+
     /// <summary>
     /// Utility functions for constructing cards from templates.
     /// </summary>
     public class CardTemplateHelper
     {
-        private const string CardsPath = "~/Helpers/AdaptiveCards/";
+        private const string CardsPath = "~/Helpers/AdaptiveCards";
 
         /// <summary>
         /// This method will create an instance of adaptiveCardTemplate with the cardPath.
@@ -27,8 +32,7 @@ namespace Icebreaker.Helpers
         /// <returns>Adaptive card template.</returns>
         public static AdaptiveCardTemplate GetAdaptiveCardTemplate(AdaptiveCardName card)
         {
-            return GetAdaptiveCardTemplate(Path.Combine(CardsPath, $"{card}AdaptiveCard.json"));
+            return GetAdaptiveCardTemplate(HostingEnvironment.MapPath(Path.Combine(CardsPath, $"{card}AdaptiveCard.json")));
         }
-
     }
 }
