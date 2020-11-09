@@ -123,6 +123,8 @@ namespace Icebreaker.Bot
                 string teamId = message.Conversation.Id;
                 var teamsChannelData = message.GetChannelData<TeamsChannelData>();
 
+                await this.SendTypingIndicatorAsync(turnContext);
+
                 foreach (var member in membersAdded)
                 {
                     if (member.Id == myBotId)
@@ -325,6 +327,27 @@ namespace Icebreaker.Bot
         }
 
         /// <summary>
+        /// Sends the typing indicator while operations in progress
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        private async Task SendTypingIndicatorAsync(ITurnContext turnContext)
+        {
+            try
+            {
+                var typingActivity = turnContext.Activity.CreateReply();
+                typingActivity.Type = ActivityTypes.Typing;
+                await turnContext.SendActivityAsync(typingActivity);
+            }
+            catch (Exception ex)
+            {
+                // Do not fail on errors sending the typing indicator
+                this.telemetryClient.TrackException(ex, new Dictionary<string, string> { { "InternalMessage", "Failed to send a typing indicator" } });
+            }
+        }
+
+
+        /// <summary>
         /// Send a welcome message to the user that was just added to a team.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
@@ -378,7 +401,7 @@ namespace Icebreaker.Bot
         /// <returns>Tracking task</returns>
         public async Task SendUnrecognizedInputMessageAsync(ITurnContext turnContext, Activity replyActivity, CancellationToken cancellationToken)
         {
-            replyActivity.Attachments = new List<Attachment>{ UnrecognizedInputAdaptiveCard.GetCard() };
+            replyActivity.Attachments = new List<Attachment> { UnrecognizedInputAdaptiveCard.GetCard() };
             await turnContext.SendActivityAsync(replyActivity, cancellationToken);
         }
 
