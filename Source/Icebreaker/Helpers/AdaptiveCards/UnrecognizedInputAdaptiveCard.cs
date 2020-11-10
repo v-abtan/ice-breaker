@@ -4,15 +4,13 @@
 // </copyright>
 //----------------------------------------------------------------------------------------------
 
-using Microsoft.Bot.Schema;
-
 namespace Icebreaker.Helpers.AdaptiveCards
 {
     using System;
-    using System.Collections.Generic;
     using global::AdaptiveCards.Templating;
     using Icebreaker.Properties;
     using Microsoft.Azure;
+    using Microsoft.Bot.Schema;
 
     /// <summary>
     /// Builder class for the unrecognized input message
