@@ -4,8 +4,6 @@
 // </copyright>
 //----------------------------------------------------------------------------------------------
 
-using Microsoft.Bot.Builder.Teams;
-
 namespace Icebreaker.Services
 {
     using System;
@@ -20,9 +18,8 @@ namespace Icebreaker.Services
     using Microsoft.Azure;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
-    using Microsoft.Bot.Connector;
+    using Microsoft.Bot.Builder.Teams;
     using Microsoft.Bot.Connector.Authentication;
-    using Microsoft.Bot.Connector.Teams;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
     using Newtonsoft.Json.Linq;
@@ -132,35 +129,6 @@ namespace Icebreaker.Services
 
             this.telemetryClient.TrackTrace($"Made {pairsNotifiedCount} pairups, {usersNotifiedCount} notifications sent");
             return pairsNotifiedCount;
-        }
-
-        /// <summary>
-        /// Get a new instance of connector client
-        /// </summary>
-        /// <param name="serviceUrl">Service url</param>
-        /// <returns>connector client instance</returns>
-        private IConnectorClient GetConnectorClient(string serviceUrl)
-        {
-            AppCredentials.TrustServiceUrl(serviceUrl);
-            return new ConnectorClient(new Uri(serviceUrl), this.appCredentials);
-        }
-
-        /// <summary>
-        /// Get TeamsConnectorClient instance from an IConnectorClient.
-        /// </summary>
-        /// <param name="connectorClient">Generic IConnectorClient instance.</param>
-        /// <returns>Returns TeamsConnectorClient to interact with Teams operations.</returns>
-        private ITeamsConnectorClient GetTeamsConnectorClient(IConnectorClient connectorClient)
-        {
-            if (connectorClient is ConnectorClient)
-            {
-                var connectorClientImpl = (ConnectorClient)connectorClient;
-                return new TeamsConnectorClient(connectorClientImpl.BaseUri, connectorClientImpl.Credentials, connectorClientImpl.HttpClient);
-            }
-            else
-            {
-                return new TeamsConnectorClient(connectorClient.BaseUri, connectorClient.Credentials);
-            }
         }
 
         /// <summary>
