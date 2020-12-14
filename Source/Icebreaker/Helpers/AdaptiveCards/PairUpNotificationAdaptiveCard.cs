@@ -53,6 +53,7 @@ namespace Icebreaker.Helpers.AdaptiveCards
                 matchUpCardContentPart1 = string.Format(Resources.MatchUpCardContentPart1, botDisplayName, teamName, recipient.Name),
                 matchUpCardContentPart2 = Resources.MatchUpCardContentPart2,
                 chatWithMatchButtonText = string.Format(Resources.ChatWithMatchButtonText, recipientGivenName),
+                chatWithMessageGreeting = Resources.ChatWithMessageGreeting,
                 pauseMatchesButtonText = Resources.PausePairingsButtonText,
                 proposeMeetupButtonText = Resources.ProposeMeetupButtonText,
                 personUpn = recipientUpn,
