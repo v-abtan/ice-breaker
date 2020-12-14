@@ -140,27 +140,40 @@ namespace Icebreaker.Helpers
         /// <summary>
         /// Get the stored information about given users
         /// </summary>
-        /// <param name="usersIdList">List of users id</param>
         /// <returns>User information</returns>
-        public async Task<List<UserInfo>> GetUsersInfoAsync(List<string> usersIdList)
+        public async Task<Dictionary<string, bool>> GetAllUsersOptInStatusAsync()
         {
             await this.EnsureInitializedAsync();
 
             try
             {
                 var collectionLink = UriFactory.CreateDocumentCollectionUri(this.database.Id, this.usersCollection.Id);
-                var query = this.documentClient.CreateDocumentQuery<UserInfo>(collectionLink, new FeedOptions { EnableCrossPartitionQuery = true })
-                    .Where(p => usersIdList.Contains(p.Id))
+                var query = this.documentClient.CreateDocumentQuery<UserInfo>(
+                        collectionLink,
+                        new FeedOptions
+                        {
+                            EnableCrossPartitionQuery = true,
+
+                            // Fetch items in bulk according to DB engine capability
+                            MaxItemCount = -1,
+
+                            // Max partition to query at a time
+                            MaxDegreeOfParallelism = -1
+                        })
+                    .Select(u => new UserInfo { Id = u.Id, OptedIn = u.OptedIn })
                     .AsDocumentQuery();
-                var usersList = new List<UserInfo>();
+                var usersOptInStatusLookup = new Dictionary<string, bool>();
                 while (query.HasMoreResults)
                 {
                     // Note that ExecuteNextAsync can return many records in each call
-                    var response = await query.ExecuteNextAsync<UserInfo>();
-                    usersList.AddRange(response);
+                    var responseBatch = await query.ExecuteNextAsync<UserInfo>();
+                    foreach (var userInfo in responseBatch)
+                    {
+                        usersOptInStatusLookup.Add(userInfo.Id, userInfo.OptedIn);
+                    }
                 }
 
-                return usersList;
+                return usersOptInStatusLookup;
             }
             catch (Exception ex)
             {
