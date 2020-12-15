@@ -7,7 +7,6 @@
 namespace Icebreaker.Helpers.AdaptiveCards
 {
     using System;
-    using global::AdaptiveCards;
     using global::AdaptiveCards.Templating;
     using Icebreaker.Properties;
     using Microsoft.Azure;

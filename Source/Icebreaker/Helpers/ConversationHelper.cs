@@ -5,7 +5,6 @@
 namespace Icebreaker.Helpers
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInsights;
@@ -17,7 +16,6 @@ namespace Icebreaker.Helpers
     using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Contains shared logic to notify team members
