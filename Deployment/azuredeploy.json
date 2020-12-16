@@ -187,8 +187,7 @@
         "pairingStartUrl": "[concat(variables('appServiceBaseUrl'), '/api/processnow')]",
         "pairingFrequency": "Week",
         "pairingMinute": 0,
-        "manifestAppId": "d55d08d9-bacb-4567-942f-afd85d632dcc",
-        "identityResourceId" : "[concat(resourceId('Microsoft.Web/sites', variables('appServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
+        "manifestAppId": "d55d08d9-bacb-4567-942f-afd85d632dcc"
     },
     "resources": [
         {
@@ -476,8 +475,8 @@
                 "enabledForTemplateDeployment": true,
                 "accessPolicies": [
                     {
-                        "tenantId": "[reference(variables('identityResourceId'), '2016-08-01').tenantId]",
-                        "objectId": "[reference(variables('identityResourceId'), '2016-08-01').principalId]",
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(concat(resourceId('Microsoft.Web/sites', variables('appServiceName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]",
                         "permissions": {
                             "secrets": [
                                 "get",
