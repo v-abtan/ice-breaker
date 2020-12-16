@@ -172,7 +172,7 @@
         "appServiceName": "[concat(variables('baseResourceName'), '-', uniqueString(resourceGroup().id))]",
         "cosmosDbName":"[concat(variables('baseResourceName'), '-storage-', uniqueString(resourceGroup().id))]",
         "logicAppName":"[concat(variables('baseResourceName'), '-logicapp-', uniqueString(resourceGroup().id))]",
-        "keyVaultName":"[concat(variables('baseResourceName'), '-keyvault-', uniqueString(resourceGroup().id))]",
+        "keyVaultName":"[concat('keyvault-', uniqueString(resourceGroup().id))]",
         "keyVaultUrl" : "[concat('https://', variables('keyVaultName'), '.vault.azure.net')]",
         "appInsightsName": "[variables('baseResourceName')]",
         "appHostingPlanName": "[variables('baseResourceName')]",
