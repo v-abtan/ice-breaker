@@ -15,11 +15,13 @@ namespace Icebreaker
     /// </summary>
     public class CultureSpecificMessageHandler : DelegatingHandler
     {
+        /// <inheritdoc/>
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var cultureName = CloudConfigurationManager.GetSetting("DefaultCulture");
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureName);
+            var culture = new CultureInfo(cultureName);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
             return base.SendAsync(request, cancellationToken);
         }
     }
