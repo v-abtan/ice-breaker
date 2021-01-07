@@ -41,6 +41,17 @@
                 "description": "The link to the icon for the bot. It must resolve to a PNG file."
             }
         },
+        "DefaultCulture": {
+            "defaultValue": "en-US",
+            "allowedValues": [
+                "en-US"
+            ],
+            "minLength": 1,
+            "type": "String",
+            "metadata": {
+                "description": "Default culture."
+            }
+        },
         "pairingWeekInterval": {
             "type": "int",
             "minValue": 1,
@@ -316,6 +327,10 @@
                         {
                             "name": "KeyVaultURI",
                             "value": "[variables('KeyVaultURI')]"
+                        },
+                        {
+                            "name": "DefaultCulture",
+                            "value": "[parameters('DefaultCulture')]"
                         }
                     ]
                 },

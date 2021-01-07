@@ -321,6 +321,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\CultureSpecificMessageHandler.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bot\IcebreakerBot.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
