@@ -28,7 +28,8 @@ namespace Icebreaker.Tests.BotTests
     {
         private readonly IcebreakerBot sut;
         private readonly TestAdapter botAdapter;
-        private readonly TeamsChannelAccount userAccount, botAccount;
+        private readonly TeamsChannelAccount userAccount;
+        private readonly TeamsChannelAccount botAccount;
         private readonly TeamsChannelData teamsChannelData;
         private readonly Mock<IBotDataProvider> dataProvider;
         private readonly TelemetryClient telemetryClient;
@@ -48,13 +49,13 @@ namespace Icebreaker.Tests.BotTests
                     }
                 }
             };
-            ConfigurationManager.AppSettings[disableTenantFilterKey] = true.ToString().ToLower();
+            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = true.ToString().ToLower();
             this.telemetryClient = new TelemetryClient();
             this.conversationHelper = new ConversationHelperMock();
             this.dataProvider = new Mock<IBotDataProvider>();
             this.dataProvider.Setup(x => x.GetInstalledTeamAsync(It.IsAny<string>()))
                 .Returns(() => Task.FromResult(new TeamInstallInfo()));
-            this.sut = new IcebreakerBot(dataProvider.Object, conversationHelper, MicrosoftAppCredentials.Empty, telemetryClient);
+            this.sut = new IcebreakerBot(this.dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
             this.userAccount = new TeamsChannelAccount { Id = Guid.NewGuid().ToString(), Properties = JObject.FromObject(new { Id = Guid.NewGuid().ToString() }) };
             this.botAccount = new TeamsChannelAccount { Id = "bot", Properties = JObject.FromObject(new { Id = "bot" }) };
             this.teamsChannelData = new TeamsChannelData
@@ -66,7 +67,6 @@ namespace Icebreaker.Tests.BotTests
                 Tenant = new TenantInfo()
             };
         }
-
 
         [Fact]
         public async Task NewBotMessage_OnAppInstalled_SenderIsNotATeam_NoReply()
@@ -88,11 +88,10 @@ namespace Icebreaker.Tests.BotTests
             await this.botAdapter.ProcessActivityAsync(appInstalledActivity, this.sut.OnTurnAsync, CancellationToken.None);
 
             var reply = (IMessageActivity)this.botAdapter.GetNextReply();
-            
+
             // Assert that no reply is received.
             Assert.Null(reply);
         }
-
 
         [Fact]
         public async Task NewBotMessage_OnAppInstalled_ReturnsTeamWelcomeCard()
@@ -117,7 +116,8 @@ namespace Icebreaker.Tests.BotTests
             this.botAdapter.GetNextReply();
 
             // Assert UpdateTeamInstallStatusAsync is called once
-            dataProvider.Verify(m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
+            this.dataProvider.Verify(
+                m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
                 Times.Exactly(1));
         }
 
@@ -144,7 +144,8 @@ namespace Icebreaker.Tests.BotTests
             this.botAdapter.GetNextReply();
 
             // Assert GetInstalledTeamAsync is called once
-            dataProvider.Verify(m => m.GetInstalledTeamAsync(It.IsAny<string>()),
+            this.dataProvider.Verify(
+                m => m.GetInstalledTeamAsync(It.IsAny<string>()),
                 Times.Exactly(1));
         }
 
@@ -174,11 +175,10 @@ namespace Icebreaker.Tests.BotTests
             Assert.Equal(1, ((HeroCard)reply.Attachments.First().Content).Buttons.Count);
 
             // Assert SetUserInfoAsync is called once with optIn param = false
-            dataProvider.Verify(
+            this.dataProvider.Verify(
                 m => m.SetUserInfoAsync(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<string>()),
                 Times.Exactly(1));
         }
-
 
         [Fact]
         public async Task NewBotMessage_OnMemberOptIn_ReturnsSuccessMessage()
@@ -206,11 +206,10 @@ namespace Icebreaker.Tests.BotTests
             Assert.Equal(1, ((HeroCard)reply.Attachments.First().Content).Buttons.Count);
 
             // Assert SetUserInfoAsync is called once with optIn param = true
-            dataProvider.Verify(
+            this.dataProvider.Verify(
                 m => m.SetUserInfoAsync(It.IsAny<string>(), It.IsAny<string>(), true, It.IsAny<string>()),
                 Times.Exactly(1));
         }
-
 
         [Fact]
         public async Task NewBotMessage_OnMemberRemoved_BotIgnoreMessage()
@@ -235,10 +234,10 @@ namespace Icebreaker.Tests.BotTests
             this.botAdapter.GetNextReply();
 
             // Assert GetInstalledTeamAsync is not called as bot ignores this case
-            dataProvider.Verify(m => m.GetInstalledTeamAsync(It.IsAny<string>()),
+            this.dataProvider.Verify(
+                m => m.GetInstalledTeamAsync(It.IsAny<string>()),
                 Times.Exactly(0));
         }
-
 
         [Fact]
         public async Task NewBotMessage_OnTeamRemoved_TeamUpdatedInDb()
@@ -263,7 +262,8 @@ namespace Icebreaker.Tests.BotTests
             this.botAdapter.GetNextReply();
 
             // Assert UpdateTeamInstallStatusAsync is called once
-            dataProvider.Verify(m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), false),
+            this.dataProvider.Verify(
+                m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), false),
                 Times.Exactly(1));
         }
 
@@ -284,8 +284,8 @@ namespace Icebreaker.Tests.BotTests
             };
 
             // Tenant filter is active
-            ConfigurationManager.AppSettings[disableTenantFilterKey] = false.ToString().ToLower();
-            var sut = new IcebreakerBot(dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
+            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = false.ToString().ToLower();
+            var sut = new IcebreakerBot(this.dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
 
             // Act
             // Send the message activity to the bot.
@@ -297,7 +297,8 @@ namespace Icebreaker.Tests.BotTests
             Assert.Null(reply);
 
             // Assert UpdateTeamInstallStatusAsync is never called
-            dataProvider.Verify(m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
+            this.dataProvider.Verify(
+                m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
                 Times.Exactly(0));
         }
 
@@ -315,16 +316,16 @@ namespace Icebreaker.Tests.BotTests
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
                 ChannelData = this.teamsChannelData,
-                // Source tenant is different from allowed tenant
-                Conversation = new ConversationAccount(tenantId: Guid.NewGuid().ToString())
+                Conversation = new ConversationAccount(tenantId: Guid.NewGuid().ToString()) // Source tenant is different from allowed tenant
             };
-            
+
             // Tenant filter is active
-            ConfigurationManager.AppSettings[disableTenantFilterKey] = false.ToString().ToLower();
+            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = false.ToString().ToLower();
+
             // Only 1 tenant is allowed
-            ConfigurationManager.AppSettings[allowedTenantsKey] = Guid.Empty.ToString();
-            
-            var sut = new IcebreakerBot(dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
+            ConfigurationManager.AppSettings[this.allowedTenantsKey] = Guid.Empty.ToString();
+
+            var sut = new IcebreakerBot(this.dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
 
             // Source tenant is different from allowed tenant
             this.botAdapter.Conversation =
@@ -340,10 +341,10 @@ namespace Icebreaker.Tests.BotTests
             Assert.Null(reply);
 
             // Assert UpdateTeamInstallStatusAsync is never called
-            dataProvider.Verify(m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
+            this.dataProvider.Verify(
+                m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
                 Times.Exactly(0));
         }
-
 
         [Fact]
         public async Task NewBotMessage_CurrentTenantIsAllowed_ChannelSaved()
@@ -364,11 +365,12 @@ namespace Icebreaker.Tests.BotTests
             };
 
             // Tenant filter is active
-            ConfigurationManager.AppSettings[disableTenantFilterKey] = false.ToString().ToLower();
-            // Only 1 tenant is allowed
-            ConfigurationManager.AppSettings[allowedTenantsKey] = Guid.Empty.ToString();
+            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = false.ToString().ToLower();
 
-            var sut = new IcebreakerBot(dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
+            // Only 1 tenant is allowed
+            ConfigurationManager.AppSettings[this.allowedTenantsKey] = Guid.Empty.ToString();
+
+            var sut = new IcebreakerBot(this.dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
 
             // Source tenant is same as allowed tenant in settings
             this.botAdapter.Conversation.Conversation = appInstalledActivity.Conversation;
@@ -380,7 +382,8 @@ namespace Icebreaker.Tests.BotTests
             var reply = this.botAdapter.GetNextReply();
 
             // Assert UpdateTeamInstallStatusAsync is called once
-            dataProvider.Verify(m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
+            this.dataProvider.Verify(
+                m => m.UpdateTeamInstallStatusAsync(It.IsAny<TeamInstallInfo>(), true),
                 Times.Exactly(1));
         }
     }

@@ -26,20 +26,19 @@ namespace Icebreaker.Tests.ControllersTests
             this.bot = new Mock<IBot>();
             this.botAdapter = new Mock<IBotFrameworkHttpAdapter>();
             this.botAdapter
-                .Setup(x => x.ProcessAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<HttpResponseMessage>(), It.IsAny<IBot>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(x => x.ProcessAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<HttpResponseMessage>(), It.IsAny<IBot>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             // Create and initialize controller
             this.sut = new MessagesController(this.botAdapter.Object, this.bot.Object)
-                {Request = new HttpRequestMessage(), Configuration = new HttpConfiguration()};
+                { Request = new HttpRequestMessage(), Configuration = new HttpConfiguration() };
         }
 
         [Fact]
         public async Task PostAsync_MessageSent_BotHandlerInvoked()
         {
             // Act: Invoke the controller
-            await sut.PostAsync();
+            await this.sut.PostAsync();
 
             // Assert
             this.botAdapter.Verify(

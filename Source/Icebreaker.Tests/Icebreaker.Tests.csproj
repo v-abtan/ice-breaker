@@ -262,13 +262,16 @@
     <Compile Include="BotTests\IceBreakerBotTests.cs" />
     <Compile Include="ControllersTests\ProcessNowControllerTests.cs" />
     <Compile Include="ControllersTests\MessagesControllerTests.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ServicesTests\MatchingServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json">
-      <Link>stylecop.json</Link>
-    </AdditionalFiles>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <AdditionalFiles Include="..\stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="test.runsettings" />
