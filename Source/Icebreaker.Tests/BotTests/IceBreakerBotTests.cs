@@ -1,24 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Icebreaker.Bot;
-using Icebreaker.Helpers;
-using Icebreaker.Interfaces;
-using Microsoft.ApplicationInsights;
-using Microsoft.Bot.Builder.Adapters;
-using Microsoft.Bot.Connector;
-using Microsoft.Bot.Connector.Authentication;
-using Microsoft.Bot.Schema;
-using Microsoft.Bot.Schema.Teams;
-using Moq;
-using Newtonsoft.Json.Linq;
-using Xunit;
+﻿// <copyright file="IceBreakerBotTests.cs" company="Microsoft">
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+// </copyright>
 
 namespace Icebreaker.Tests.BotTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Icebreaker.Bot;
+    using Icebreaker.Helpers;
+    using Icebreaker.Interfaces;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.Bot.Builder.Adapters;
+    using Microsoft.Bot.Connector;
+    using Microsoft.Bot.Connector.Authentication;
+    using Microsoft.Bot.Schema;
+    using Microsoft.Bot.Schema.Teams;
+    using Moq;
+    using Newtonsoft.Json.Linq;
+    using Xunit;
+
     public class IceBreakerBotTests
     {
         private readonly IcebreakerBot sut;

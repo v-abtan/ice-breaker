@@ -1,21 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Threading.Tasks;
-using Icebreaker.Helpers;
-using Icebreaker.Interfaces;
-using Icebreaker.Services;
-using Microsoft.ApplicationInsights;
-using Microsoft.Bot.Builder.Adapters;
-using Microsoft.Bot.Connector;
-using Microsoft.Bot.Connector.Authentication;
-using Microsoft.Bot.Schema;
-using Microsoft.Bot.Schema.Teams;
-using Moq;
-using Xunit;
+﻿// <copyright file="MatchingServiceTests.cs" company="Microsoft">
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+// </copyright>
 
 namespace Icebreaker.Tests.ServicesTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Threading.Tasks;
+    using Icebreaker.Helpers;
+    using Icebreaker.Interfaces;
+    using Icebreaker.Services;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.Bot.Builder.Adapters;
+    using Microsoft.Bot.Connector;
+    using Microsoft.Bot.Connector.Authentication;
+    using Microsoft.Bot.Schema;
+    using Microsoft.Bot.Schema.Teams;
+    using Moq;
+    using Xunit;
+
     public class MatchingServiceTests
     {
         private readonly IMatchingService sut;

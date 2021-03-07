@@ -1,15 +1,20 @@
-﻿using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Icebreaker.Controllers;
-using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
-using Moq;
-using Xunit;
+﻿// <copyright file="MessagesControllerTests.cs" company="Microsoft">
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+// </copyright>
 
 namespace Icebreaker.Tests.ControllersTests
 {
+    using System.Net.Http;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Web.Http;
+    using Icebreaker.Controllers;
+    using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.Integration.AspNet.WebApi;
+    using Moq;
+    using Xunit;
+
     public class MessagesControllerTests
     {
         private readonly MessagesController sut;

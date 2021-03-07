@@ -1,5 +1,9 @@
+// <copyright file="AssemblyInfo.cs" company="Microsoft">
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+// </copyright>
+
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Microsoft.Teams.Apps.Icebreaker.Tests")]
