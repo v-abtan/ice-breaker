@@ -62,7 +62,7 @@ namespace Icebreaker.Helpers.AdaptiveCards
                 pauseMatchesText = Resources.PausePairingsButtonText,
                 tourUrl = GetTourFullUrl(appId, GetTourUrl(baseDomain), tourTitle),
                 salutationText = Resources.SalutationTitleText,
-                tourButtonText = Resources.TakeATourButtonText
+                tourButtonText = Resources.TakeATourButtonText,
             };
 
             return GetCard(AdaptiveCardTemplate.Value, welcomeData);

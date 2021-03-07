@@ -10,8 +10,8 @@ namespace Icebreaker.Services
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
-    using Helpers.AdaptiveCards;
+    using Icebreaker.Helpers;
+    using Icebreaker.Helpers.AdaptiveCards;
     using Icebreaker.Interfaces;
     using Microsoft.ApplicationInsights;
     using Microsoft.ApplicationInsights.DataContracts;

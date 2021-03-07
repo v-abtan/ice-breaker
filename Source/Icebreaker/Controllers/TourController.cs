@@ -32,6 +32,7 @@ namespace Icebreaker.Controllers
                 }
                 catch
                 {
+                    // Fall back to the default culture setting if there is an error getting a CultureInfo from the locale
                     culture = CultureInfo.GetCultureInfo(CloudConfigurationManager.GetSetting("DefaultCulture"));
                 }
 

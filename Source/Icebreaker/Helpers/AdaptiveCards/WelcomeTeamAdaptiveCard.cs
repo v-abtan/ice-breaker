@@ -56,7 +56,7 @@ namespace Icebreaker.Helpers.AdaptiveCards
                 welcomeCardImageUrl = $"https://{baseDomain}/Content/welcome-card-image.png",
                 tourUrl = GetTourFullUrl(appId, GetTourUrl(baseDomain), tourTitle),
                 salutationText = Resources.SalutationTitleText,
-                tourButtonText = Resources.TakeATourButtonText
+                tourButtonText = Resources.TakeATourButtonText,
             };
 
             return GetCard(AdaptiveCardTemplate.Value, welcomeData);

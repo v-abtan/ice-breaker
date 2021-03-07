@@ -17,11 +17,17 @@ namespace Icebreaker.Tests.ControllersTests
     using Moq;
     using Xunit;
 
+    /// <summary>
+    /// Unit tests for the <see cref="ProcessNowController"/> class.
+    /// </summary>
     public class ProcessNowControllerTests
     {
         private readonly ProcessNowController sut;
         private readonly string apiKey;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProcessNowControllerTests"/> class.
+        /// </summary>
         public ProcessNowControllerTests()
         {
             this.apiKey = Guid.NewGuid().ToString();
@@ -35,7 +41,7 @@ namespace Icebreaker.Tests.ControllersTests
             this.sut = new ProcessNowController(matchingService.Object, appCredentials.Object, secretsHelper.Object)
             {
                 Request = new HttpRequestMessage(),
-                Configuration = new HttpConfiguration()
+                Configuration = new HttpConfiguration(),
             };
         }
 

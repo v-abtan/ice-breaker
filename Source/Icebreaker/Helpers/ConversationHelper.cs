@@ -84,7 +84,7 @@ namespace Icebreaker.Helpers
                     ChannelData = new TeamsChannelData
                     {
                         Tenant = new TenantInfo(tenantId),
-                    }
+                    },
                 };
 
                 if (!this.isTesting)

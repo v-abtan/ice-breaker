@@ -12,7 +12,7 @@ namespace Icebreaker
     using Microsoft.Azure;
 
     /// <summary>
-    /// Message handler to set culture specific settings
+    /// Message handler to set culture specific settings.
     /// </summary>
     public class CultureSpecificMessageHandler : DelegatingHandler
     {

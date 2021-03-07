@@ -21,6 +21,9 @@ namespace Icebreaker.Tests.ServicesTests
     using Moq;
     using Xunit;
 
+    /// <summary>
+    /// Unit tests for the <see cref="MatchingService"/> class.
+    /// </summary>
     public class MatchingServiceTests
     {
         private readonly IMatchingService sut;
@@ -29,6 +32,9 @@ namespace Icebreaker.Tests.ServicesTests
         private readonly Mock<ConversationHelper> conversationHelper;
         private readonly string maxPairsSettingsKey = "MaxPairUpsPerTeam";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchingServiceTests"/> class.
+        /// </summary>
         public MatchingServiceTests()
         {
             this.botAdapter = new TestAdapter(Channels.Msteams)
@@ -37,9 +43,9 @@ namespace Icebreaker.Tests.ServicesTests
                 {
                     Conversation = new ConversationAccount
                     {
-                        ConversationType = "channel"
-                    }
-                }
+                        ConversationType = "channel",
+                    },
+                },
             };
             var telemetryClient = new TelemetryClient();
             this.conversationHelper = new Mock<ConversationHelper>(MockBehavior.Loose, new MicrosoftAppCredentials(string.Empty, string.Empty), telemetryClient);
@@ -101,7 +107,7 @@ namespace Icebreaker.Tests.ServicesTests
             this.conversationHelper.Setup(x => x.GetTeamMembers(this.botAdapter, It.IsAny<TeamInstallInfo>()))
                 .Returns(() => Task.FromResult((IList<ChannelAccount>)new List<ChannelAccount>
                 {
-                    new ChannelAccount(Guid.NewGuid().ToString())
+                    new ChannelAccount(Guid.NewGuid().ToString()),
                 }));
 
             // Act
@@ -129,7 +135,7 @@ namespace Icebreaker.Tests.ServicesTests
         {
             // Arrange
             this.dataProvider.Setup(x => x.GetInstalledTeamsAsync())
-                .Returns(() => Task.FromResult((IList<TeamInstallInfo>)new List<TeamInstallInfo>
+                .Returns(() => Task.FromResult<IList<TeamInstallInfo>>(new List<TeamInstallInfo>
                 {
                     new TeamInstallInfo { TeamId = Guid.NewGuid().ToString() },
                     new TeamInstallInfo { TeamId = Guid.NewGuid().ToString() },
@@ -145,14 +151,18 @@ namespace Icebreaker.Tests.ServicesTests
                 {
                     new TeamsChannelAccount
                     {
-                        Id = Guid.NewGuid().ToString(), AadObjectId = Guid.NewGuid().ToString(),
-                        UserPrincipalName = string.Empty, Email = string.Empty
+                        Id = Guid.NewGuid().ToString(),
+                        AadObjectId = Guid.NewGuid().ToString(),
+                        UserPrincipalName = string.Empty,
+                        Email = string.Empty,
                     },
                     new TeamsChannelAccount
                     {
-                        Id = Guid.NewGuid().ToString(), AadObjectId = Guid.NewGuid().ToString(),
-                        UserPrincipalName = string.Empty, Email = string.Empty
-                    }
+                        Id = Guid.NewGuid().ToString(),
+                        AadObjectId = Guid.NewGuid().ToString(),
+                        UserPrincipalName = string.Empty,
+                        Email = string.Empty,
+                    },
                 }));
 
             // Act
@@ -180,7 +190,7 @@ namespace Icebreaker.Tests.ServicesTests
         {
             // Arrange
             this.dataProvider.Setup(x => x.GetInstalledTeamsAsync())
-                .Returns(() => Task.FromResult((IList<TeamInstallInfo>)new List<TeamInstallInfo>
+                .Returns(() => Task.FromResult<IList<TeamInstallInfo>>(new List<TeamInstallInfo>
                 {
                     new TeamInstallInfo { TeamId = Guid.NewGuid().ToString() },
                     new TeamInstallInfo { TeamId = Guid.NewGuid().ToString() },
@@ -192,23 +202,27 @@ namespace Icebreaker.Tests.ServicesTests
             this.dataProvider.Setup(x => x.GetAllUsersOptInStatusAsync())
                 .Returns(() => Task.FromResult(new Dictionary<string, bool>
                 {
-                    { optedOutUserId, false }
+                    { optedOutUserId, false },
                 }));
 
             // 2 members exist in each team
             this.conversationHelper.Setup(x => x.GetTeamMembers(this.botAdapter, It.IsAny<TeamInstallInfo>()))
-                .Returns(() => Task.FromResult((IList<ChannelAccount>)new List<ChannelAccount>
+                .Returns(() => Task.FromResult<IList<ChannelAccount>>(new List<ChannelAccount>
                 {
                     new TeamsChannelAccount
                     {
-                        Id = optedOutUserId, AadObjectId = optedOutUserId,
-                        UserPrincipalName = string.Empty, Email = string.Empty
+                        Id = optedOutUserId,
+                        AadObjectId = optedOutUserId,
+                        UserPrincipalName = string.Empty,
+                        Email = string.Empty,
                     },
                     new TeamsChannelAccount
                     {
-                        Id = Guid.NewGuid().ToString(), AadObjectId = Guid.NewGuid().ToString(),
-                        UserPrincipalName = string.Empty, Email = string.Empty
-                    }
+                        Id = Guid.NewGuid().ToString(),
+                        AadObjectId = Guid.NewGuid().ToString(),
+                        UserPrincipalName = string.Empty,
+                        Email = string.Empty,
+                    },
                 }));
 
             // Act
@@ -248,7 +262,7 @@ namespace Icebreaker.Tests.ServicesTests
             this.dataProvider.Setup(x => x.GetAllUsersOptInStatusAsync())
                 .Returns(() => Task.FromResult(new Dictionary<string, bool>
                 {
-                    { optedOutUserId, true }
+                    { optedOutUserId, true },
                 }));
 
             // 2 members exist in each team
@@ -268,7 +282,7 @@ namespace Icebreaker.Tests.ServicesTests
                         AadObjectId = Guid.NewGuid().ToString(),
                         UserPrincipalName = string.Empty,
                         Email = string.Empty,
-                    }
+                    },
                 }));
 
             // Act
@@ -296,7 +310,7 @@ namespace Icebreaker.Tests.ServicesTests
         {
             // Arrange
             this.dataProvider.Setup(x => x.GetInstalledTeamsAsync())
-                .Returns(() => Task.FromResult((IList<TeamInstallInfo>)new List<TeamInstallInfo>
+                .Returns(() => Task.FromResult<IList<TeamInstallInfo>>(new List<TeamInstallInfo>
                 {
                     new TeamInstallInfo { TeamId = Guid.NewGuid().ToString() },
                 }));
@@ -307,7 +321,7 @@ namespace Icebreaker.Tests.ServicesTests
 
             // 2 members exist in each team
             this.conversationHelper.Setup(x => x.GetTeamMembers(this.botAdapter, It.IsAny<TeamInstallInfo>()))
-                .Returns(() => Task.FromResult((IList<ChannelAccount>)new List<ChannelAccount>
+                .Returns(() => Task.FromResult<IList<ChannelAccount>>(new List<ChannelAccount>
                 {
                     new TeamsChannelAccount
                     {
@@ -322,7 +336,7 @@ namespace Icebreaker.Tests.ServicesTests
                         AadObjectId = Guid.NewGuid().ToString(),
                         UserPrincipalName = string.Empty,
                         Email = string.Empty,
-                    }
+                    },
                 }));
 
             var maxPairUpsPerTeam = ConfigurationManager.AppSettings[this.maxPairsSettingsKey];

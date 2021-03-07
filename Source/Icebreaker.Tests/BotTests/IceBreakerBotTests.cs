@@ -24,8 +24,14 @@ namespace Icebreaker.Tests.BotTests
     using Newtonsoft.Json.Linq;
     using Xunit;
 
+    /// <summary>
+    /// Unit tests for the <see cref="IcebreakerBot"/> class.
+    /// </summary>
     public class IceBreakerBotTests
     {
+        private const string DisableTenantFilterKey = "DisableTenantFilter";
+        private const string AllowedTenantsKey = "AllowedTenants";
+
         private readonly IcebreakerBot sut;
         private readonly TestAdapter botAdapter;
         private readonly TeamsChannelAccount userAccount;
@@ -34,8 +40,6 @@ namespace Icebreaker.Tests.BotTests
         private readonly Mock<IBotDataProvider> dataProvider;
         private readonly TelemetryClient telemetryClient;
         private readonly ConversationHelperMock conversationHelper;
-        private string disableTenantFilterKey = "DisableTenantFilter";
-        private string allowedTenantsKey = "AllowedTenants";
 
         public IceBreakerBotTests()
         {
@@ -45,11 +49,11 @@ namespace Icebreaker.Tests.BotTests
                 {
                     Conversation = new ConversationAccount
                     {
-                        ConversationType = "channel"
-                    }
-                }
+                        ConversationType = "channel",
+                    },
+                },
             };
-            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = true.ToString().ToLower();
+            ConfigurationManager.AppSettings[DisableTenantFilterKey] = true.ToString().ToLower();
             this.telemetryClient = new TelemetryClient();
             this.conversationHelper = new ConversationHelperMock();
             this.dataProvider = new Mock<IBotDataProvider>();
@@ -62,9 +66,9 @@ namespace Icebreaker.Tests.BotTests
             {
                 Team = new TeamInfo
                 {
-                    Id = "TeamId"
+                    Id = "TeamId",
                 },
-                Tenant = new TenantInfo()
+                Tenant = new TenantInfo(),
             };
         }
 
@@ -76,7 +80,7 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersAdded = new List<ChannelAccount>
                 {
-                    this.botAccount
+                    this.botAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = "msteams",
@@ -101,12 +105,12 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersAdded = new List<ChannelAccount>
                 {
-                    this.botAccount
+                    this.botAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
-                ChannelData = this.teamsChannelData
+                ChannelData = this.teamsChannelData,
             };
 
             // Act
@@ -129,12 +133,12 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersAdded = new List<ChannelAccount>
                 {
-                    this.userAccount
+                    this.userAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
-                ChannelData = this.teamsChannelData
+                ChannelData = this.teamsChannelData,
             };
 
             // Act
@@ -160,7 +164,7 @@ namespace Icebreaker.Tests.BotTests
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
                 From = this.userAccount,
-                ChannelData = this.teamsChannelData
+                ChannelData = this.teamsChannelData,
             };
 
             // Act
@@ -191,7 +195,7 @@ namespace Icebreaker.Tests.BotTests
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
                 From = this.userAccount,
-                ChannelData = this.teamsChannelData
+                ChannelData = this.teamsChannelData,
             };
 
             // Act
@@ -219,12 +223,12 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersRemoved = new List<ChannelAccount>
                 {
-                    this.userAccount
+                    this.userAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
-                ChannelData = this.teamsChannelData
+                ChannelData = this.teamsChannelData,
             };
 
             // Act
@@ -247,12 +251,12 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersRemoved = new List<ChannelAccount>
                 {
-                    this.botAccount
+                    this.botAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
-                ChannelData = this.teamsChannelData
+                ChannelData = this.teamsChannelData,
             };
 
             // Act
@@ -275,16 +279,16 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersAdded = new List<ChannelAccount>
                 {
-                    this.botAccount
+                    this.botAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
-                ChannelData = this.teamsChannelData
+                ChannelData = this.teamsChannelData,
             };
 
             // Tenant filter is active
-            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = false.ToString().ToLower();
+            ConfigurationManager.AppSettings[DisableTenantFilterKey] = false.ToString().ToLower();
             var sut = new IcebreakerBot(this.dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
 
             // Act
@@ -310,20 +314,20 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersAdded = new List<ChannelAccount>
                 {
-                    this.botAccount
+                    this.botAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = Channels.Msteams,
                 Recipient = this.botAccount,
                 ChannelData = this.teamsChannelData,
-                Conversation = new ConversationAccount(tenantId: Guid.NewGuid().ToString()) // Source tenant is different from allowed tenant
+                Conversation = new ConversationAccount(tenantId: Guid.NewGuid().ToString()), // Source tenant is different from allowed tenant
             };
 
             // Tenant filter is active
-            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = false.ToString().ToLower();
+            ConfigurationManager.AppSettings[DisableTenantFilterKey] = false.ToString().ToLower();
 
             // Only 1 tenant is allowed
-            ConfigurationManager.AppSettings[this.allowedTenantsKey] = Guid.Empty.ToString();
+            ConfigurationManager.AppSettings[AllowedTenantsKey] = Guid.Empty.ToString();
 
             var sut = new IcebreakerBot(this.dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
 
@@ -354,7 +358,7 @@ namespace Icebreaker.Tests.BotTests
             {
                 MembersAdded = new List<ChannelAccount>
                 {
-                    this.botAccount
+                    this.botAccount,
                 },
                 Type = ActivityTypes.ConversationUpdate,
                 ChannelId = Channels.Msteams,
@@ -365,10 +369,10 @@ namespace Icebreaker.Tests.BotTests
             };
 
             // Tenant filter is active
-            ConfigurationManager.AppSettings[this.disableTenantFilterKey] = false.ToString().ToLower();
+            ConfigurationManager.AppSettings[DisableTenantFilterKey] = false.ToString().ToLower();
 
             // Only 1 tenant is allowed
-            ConfigurationManager.AppSettings[this.allowedTenantsKey] = Guid.Empty.ToString();
+            ConfigurationManager.AppSettings[AllowedTenantsKey] = Guid.Empty.ToString();
 
             var sut = new IcebreakerBot(this.dataProvider.Object, this.conversationHelper, MicrosoftAppCredentials.Empty, this.telemetryClient);
 

@@ -33,7 +33,7 @@ namespace Icebreaker.Helpers.AdaptiveCards
             {
                 messageContent = Resources.UnrecognizedInput,
                 tourUrl = GetTourFullUrl(appId, GetTourUrl(baseDomain), tourTitle),
-                tourButtonText = Resources.TakeATourButtonText
+                tourButtonText = Resources.TakeATourButtonText,
             };
 
             return GetCard(AdaptiveCardTemplate.Value, cardData);

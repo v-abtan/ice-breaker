@@ -14,7 +14,7 @@ namespace Icebreaker.Tests.BotTests
     using Microsoft.Bot.Schema.Teams;
 
     /// <summary>
-    /// Provide fake implementation to static methods call in BotFramework
+    /// Provide fake implementation to static methods call in BotFramework.
     /// </summary>
     public class ConversationHelperMock : ConversationHelper
     {
