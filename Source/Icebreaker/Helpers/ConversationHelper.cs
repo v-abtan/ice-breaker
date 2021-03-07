@@ -170,11 +170,19 @@ namespace Icebreaker.Helpers
         /// <returns>List of team members channel accounts</returns>
         public virtual async Task<IList<ChannelAccount>> GetTeamMembers(BotAdapter botAdapter, TeamInstallInfo teamInfo)
         {
-            IList<ChannelAccount> members = new List<ChannelAccount>();
-            await this.ExecuteInNewTurnContext(botAdapter, teamInfo, async (newTurnContext, newCancellationToken) =>
+            var members = new List<ChannelAccount>();
+            await this.ExecuteInNewTurnContext(botAdapter, teamInfo, async (turnContext, cancellationToken) =>
             {
-                members = await ((BotFrameworkAdapter)botAdapter).GetConversationMembersAsync(newTurnContext, default(CancellationToken))
-                    .ConfigureAwait(false);
+                TeamsPagedMembersResult pagedResult;
+                do
+                {
+                    pagedResult = await TeamsInfo.GetPagedTeamMembersAsync(turnContext, teamInfo.TeamId);
+                    if (pagedResult.Members != null)
+                    {
+                        members.AddRange(pagedResult.Members);
+                    }
+                }
+                while (pagedResult.ContinuationToken != null);
             });
             return members;
         }
