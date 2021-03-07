@@ -58,26 +58,26 @@
     <Reference Include="Microsoft.ApplicationInsights, Version=2.9.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.9.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bot.Builder, Version=4.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.4.11.1\lib\netstandard2.0\Microsoft.Bot.Builder.dll</HintPath>
+    <Reference Include="Microsoft.Bot.Builder, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Builder.4.12.0\lib\netstandard2.0\Microsoft.Bot.Builder.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bot.Builder.Dialogs, Version=4.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Builder.Dialogs.4.11.1\lib\netstandard2.0\Microsoft.Bot.Builder.Dialogs.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bot.Builder.Integration.AspNet.WebApi, Version=4.10.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.Integration.AspNet.WebApi.4.10.3\lib\net461\Microsoft.Bot.Builder.Integration.AspNet.WebApi.dll</HintPath>
+    <Reference Include="Microsoft.Bot.Builder.Integration.AspNet.WebApi, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Builder.Integration.AspNet.WebApi.4.12.0\lib\net461\Microsoft.Bot.Builder.Integration.AspNet.WebApi.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bot.Builder.Testing, Version=4.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Builder.Testing.4.11.1\lib\netstandard2.0\Microsoft.Bot.Builder.Testing.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bot.Connector, Version=4.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Connector.4.11.1\lib\netstandard2.0\Microsoft.Bot.Connector.dll</HintPath>
+    <Reference Include="Microsoft.Bot.Connector, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Connector.4.12.0\lib\netstandard2.0\Microsoft.Bot.Connector.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bot.Schema, Version=4.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Schema.4.11.1\lib\netstandard2.0\Microsoft.Bot.Schema.dll</HintPath>
+    <Reference Include="Microsoft.Bot.Schema, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Schema.4.12.0\lib\netstandard2.0\Microsoft.Bot.Schema.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bot.Streaming, Version=4.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Streaming.4.11.1\lib\netstandard2.0\Microsoft.Bot.Streaming.dll</HintPath>
+    <Reference Include="Microsoft.Bot.Streaming, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Streaming.4.12.0\lib\netstandard2.0\Microsoft.Bot.Streaming.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="Microsoft.CSharp" />
@@ -92,6 +92,9 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Http, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Http.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Http.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Logging, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Logging.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
