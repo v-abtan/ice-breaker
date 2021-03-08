@@ -177,11 +177,11 @@ namespace Icebreaker.Helpers
                 do
                 {
                     var pagedResult = await TeamsInfo.GetPagedTeamMembersAsync(turnContext, teamInfo.TeamId, continuationToken, pageSize: 500);
+                    continuationToken = pagedResult.ContinuationToken;
                     if (pagedResult.Members != null)
                     {
                         members.AddRange(pagedResult.Members);
                     }
-                    continuationToken = pagedResult.ContinuationToken;
                 }
                 while (continuationToken != null);
             });
