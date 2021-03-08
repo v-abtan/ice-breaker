@@ -11,9 +11,12 @@ Icebreaker works really well for cultivating small, interest-based communities w
 
 ## What's new
 
+> **IMPORTANT** If you are using the initial release of Icebreaker, please upgrade to version 2. This is especially important of you are using the app in a team with more than 5,000 members. The API used to get the team roster in version 1 does not support large teams, has been deprecated, and will no longer work in the future.
+
 #### Version 2 (March 2021)
 - Update from version 3 of the Bot Framework SDK to the latest version 4
 - Fetch team roster using the paged members API, to avoid failures with large team sizes. See the deprecation notice [here](https://developer.microsoft.com/en-us/microsoft-teams/blogs/changes-coming-to-microsoft-teams-bot-apis-for-fetching-team-chat-members/).
+    - If you are using Icebreaker in a large team, remember to review the `MaxPairUpsPerTeam` app service setting.
 - Store secrets and connection strings in Azure Key Vault
 
 ## Legal notice
