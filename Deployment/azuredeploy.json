@@ -357,7 +357,7 @@
                 "containerSize": 0,
                 "dailyMemoryTimeQuota": 0,
                 "cloningInfo": null,
-                "httpsOnly": false
+                "httpsOnly": true
             },
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', variables('appHostingPlanName'))]"
