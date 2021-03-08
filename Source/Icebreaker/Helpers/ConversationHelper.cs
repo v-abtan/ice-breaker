@@ -173,16 +173,17 @@ namespace Icebreaker.Helpers
             var members = new List<ChannelAccount>();
             await this.ExecuteInNewTurnContext(botAdapter, teamInfo, async (turnContext, cancellationToken) =>
             {
-                TeamsPagedMembersResult pagedResult;
+                string continuationToken = null;
                 do
                 {
-                    pagedResult = await TeamsInfo.GetPagedTeamMembersAsync(turnContext, teamInfo.TeamId);
+                    var pagedResult = await TeamsInfo.GetPagedTeamMembersAsync(turnContext, teamInfo.TeamId, continuationToken, pageSize: 500);
                     if (pagedResult.Members != null)
                     {
                         members.AddRange(pagedResult.Members);
                     }
+                    continuationToken = pagedResult.ContinuationToken;
                 }
-                while (pagedResult.ContinuationToken != null);
+                while (continuationToken != null);
             });
             return members;
         }
